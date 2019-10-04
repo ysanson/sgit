@@ -1,4 +1,4 @@
-package sgit.commands
+package sgit.main.commands
 
 import org.backuity.clist.Command
 
