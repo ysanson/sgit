@@ -10,7 +10,7 @@ object Main extends App {
     case Some(Status) => println("Status")
     case Some(Diff) => println("Diff")
     case Some(Commit) => println("Commit")
-    case Some(Add) => println("Add")
+    case Some(Add) => println("Add " + Add.files)
     case None => println("No arguments")
     case _ => println("Error")
   }

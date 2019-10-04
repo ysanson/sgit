@@ -27,6 +27,7 @@ object FolderManipulation {
     val _ : File = ".sgit/HEAD"
       .toFile
       .createIfNotExists(false, true)
+      .append("ref: refs/heads/master")
     val _ : File = ".sgit/staged"
       .toFile
       .createIfNotExists(false, true)
