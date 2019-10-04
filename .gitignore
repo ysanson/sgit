@@ -10,3 +10,5 @@ target/
 .DS_Store
 
 out/artifacts/sgit_jar/sgit.jar
+
+.sgit/
