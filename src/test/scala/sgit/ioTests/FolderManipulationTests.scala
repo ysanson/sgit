@@ -8,9 +8,11 @@ import better.files._
 class FolderManipulationTests extends FunSpec {
   describe("With no folder"){
     it("Should create the folder structure"){
-      val _ : File = ".sgit"
-        .toFile
-        .delete()
+      if(Files.exists(Paths.get(".sgit"))) {
+        val _ : File = ".sgit"
+          .toFile
+          .delete()
+      }
       val res = FolderManipulation.createFolderStructure()
       assert(res)
       assert(Files.exists(Paths.get(".sgit/refs/heads")))
@@ -18,6 +20,18 @@ class FolderManipulationTests extends FunSpec {
       assert(Files.exists(Paths.get(".sgit/objects")))
       assert(Files.exists(Paths.get(".sgit/staged")))
       assert(Files.readString(Paths.get(".sgit/HEAD")) == "ref: refs/heads/master")
+      val _ : File = ".sgit"
+        .toFile
+        .delete()
+    }
+  }
+
+  describe("With a folder already in place"){
+    it("Should do nothing"){
+      val _ : File = ".sgit"
+        .toFile
+        .createIfNotExists(asDirectory = true)
+      assert(!FolderManipulation.createFolderStructure())
       val _ : File = ".sgit"
         .toFile
         .delete()
