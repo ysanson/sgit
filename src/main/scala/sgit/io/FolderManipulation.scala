@@ -10,27 +10,26 @@ import better.files._
 object FolderManipulation {
   def isFolderPresent(folderName: String): Boolean = Files.exists(Paths.get(folderName))
 
+  /**
+   * Creates the .sgit folder structure.
+   * @return true if the folder has been created correctly, false otherwise.
+   */
   def createFolderStructure(): Boolean = {
     if(isFolderPresent(".sgit")) return false
-    val _ : File = ".sgit"
-      .toFile
-      .createDirectory()
-    val _ : File = ".sgit/objects"
-      .toFile
-      .createDirectory()
-    val _ : File = ".sgit/refs/heads"
-      .toFile
-      .createDirectoryIfNotExists(true)
-    val _ : File = ".sgit/refs/tags"
-      .toFile
-      .createDirectoryIfNotExists(true)
+
+    val createFile = (name: String, isDir: Boolean) => {
+      val _ : File = name
+        .toFile
+        .createIfNotExists(isDir, true)
+    }
+    createFile(".sgit/objects", true)
+    createFile(".sgit/refs/heads", true)
+    createFile(".sgit/refs/tags", true)
+    createFile(".sgit/staged", false)
     val _ : File = ".sgit/HEAD"
       .toFile
       .createIfNotExists(false, true)
       .append("ref: refs/heads/master")
-    val _ : File = ".sgit/staged"
-      .toFile
-      .createIfNotExists(false, true)
     true
   }
 }

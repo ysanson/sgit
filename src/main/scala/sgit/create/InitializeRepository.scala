@@ -1,7 +1,6 @@
 package sgit.create
 
-import sgit.io.FolderManipulation
-import sgit.io.ConsoleOutput
+import sgit.io.{ConsoleOutput, FolderManipulation}
 
 object InitializeRepository {
   def createFolder(): Unit = {
