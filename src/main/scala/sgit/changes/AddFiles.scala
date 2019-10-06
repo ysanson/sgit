@@ -11,9 +11,11 @@ object AddFiles {
 
   def getFiles(files: Seq[JFile]): Seq[File] = {
     if(files.head.getName == '.') searchForNewFiles()
-    //else if(files.head.getName.contains('*'))
     else
-      files.map(file => file.getPath.toFile)
+      files.iterator
+        .flatMap(file => FileManipulation.findFiles(file.getPath))
+        .toSeq
+
   }
 
   def add(files: Seq[JFile]): Boolean = {

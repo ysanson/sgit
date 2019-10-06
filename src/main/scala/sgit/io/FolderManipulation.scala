@@ -8,6 +8,11 @@ import better.files._
  * Contains all the methods to manipulate folders in the project.
  */
 object FolderManipulation {
+  /**
+   * Checks if the folder is present.
+   * @param folderName the folder name
+   * @return true if the folder exists, false otherwise.
+   */
   def isFolderPresent(folderName: String): Boolean = Files.exists(Paths.get(folderName))
 
   /**
@@ -20,7 +25,7 @@ object FolderManipulation {
     val createFile = (name: String, isDir: Boolean) => {
       val _ : File = name
         .toFile
-        .createIfNotExists(isDir, true)
+        .createIfNotExists(isDir, createParents = true)
     }
     createFile(".sgit/objects", true)
     createFile(".sgit/refs/heads", true)
@@ -28,7 +33,7 @@ object FolderManipulation {
     createFile(".sgit/staged", false)
     val _ : File = ".sgit/HEAD"
       .toFile
-      .createIfNotExists(false, true)
+      .createIfNotExists(asDirectory = false, createParents = true)
       .append("ref: refs/heads/master")
     true
   }
