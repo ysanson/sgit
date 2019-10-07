@@ -32,7 +32,6 @@ object TreeManipulation {
     if(tree.path == path) Some(tree)
     else {
       tree match {
-        case _: Blob => None
         case folder: Folder => {
           folder.children
             .map(child => searchInTree(child, path))
