@@ -8,14 +8,20 @@ object CommitManipulation {
    * Finds the most recent commit.
    * @return the commit id.
    */
-  def findMostRecentCommit(): String = {
+  def findMostRecentCommit(): Option[String] = {
     val ref : String = ".sgit/HEAD"
       .toFile
       .contentAsString()
       .substring(4)
-    ref.toFile.contentAsString
+    if(ref.toFile.exists) Some(ref.toFile.contentAsString)
+    else None
   }
 
+  /**
+   * Finds the commit infos by its ID.
+   * @param commit the commit id
+   * @return a commit object with the infos.
+   */
   def findCommitInfos(commit: String): Commit = {
     val values: Array[String] = (".sgit/objects/" + commit).toFile.contentAsString.split("\n")
     Commit(commit,

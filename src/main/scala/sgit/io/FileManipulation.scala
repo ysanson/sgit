@@ -11,14 +11,20 @@ object FileManipulation {
     val stagedFile : File = ".sgit/staged"
       .toFile
     val content = stagedFile.contentAsString().split("\n")
-
-    content.map((file: String) => {
-      val stored: File = (".sgit/objects/"+file)
-          .toFile
-      stored
-    })
+    content.map((file: String) => (".sgit/objects/"+file).toFile)
   }
 
+  /**
+   * Gets the staged file names.
+   * @return a sequence of string indicating the file names.
+   */
+  def retrieveStagedFileNames(): Seq[String] = retrieveStagedFiles().map(f => f.contentAsString.substring(0, f.contentAsString.indexOf('\n')))
+
+  def relativizeFilePath(file: File): Option[String] = {
+    if(!".sgit".toFile.exists) return None
+    val rootDir = ".sgit".toFile.parent
+    Some(rootDir.relativize(file).toString)
+  }
   /**
    * Adds files to the storage.
    * Creates a file in the objects folder for each entry file.
@@ -27,11 +33,10 @@ object FileManipulation {
   def addFilesToObjects(files: Seq[File]): Option[Seq[String]] = {
     if(!".sgit/objects".toFile.exists) None
     else {
-      val rootDir = ".sgit".toFile.parent
       val res = files.iterator.map(f => {
         val _ : File = (".sgit/objects/" + f.sha1)
           .toFile
-          .appendLine(rootDir.relativize(f).toString)
+          .appendLine(relativizeFilePath(f).getOrElse("UNKNOWN"))
           .appendText(f.contentAsString)
         f.sha1
       }).toSeq
@@ -53,6 +58,11 @@ object FileManipulation {
     }
   }
 
+  /**
+   * Gets the files related to the name or regular expression.
+   * @param fileName the file name or the regular expression.
+   * @return a sequence of files.
+   */
   def getFile(fileName: String): Seq[File] = {
     if(!fileName.contains('*') || fileName.toFile.exists) Seq(fileName.toFile)
     else {
@@ -60,6 +70,13 @@ object FileManipulation {
       rootDir.glob(fileName).toSeq
     }
   }
+
+  /**
+   * Compares two files and checks if their contents are the same.
+   * @param file1 the first file
+   * @param file2 the second file
+   * @return an option, none if one of the file is not present, true if the contents are the same, false otherwise.
+   */
   def compareFiles(file1: File, file2: File): Option[Boolean] = {
     if (!file1.exists || !file2.exists) None
     else Some(file1.isSameContentAs(file2))
