@@ -5,7 +5,14 @@ import java.nio.file.{Files, Paths}
 import sgit.io.FolderManipulation
 import better.files._
 
-class FolderManipulationTests extends FunSpec {
+class FolderManipulationTests extends FunSpec with BeforeAndAfter {
+
+  after {
+    val _ : File = ".sgit"
+      .toFile
+      .delete()
+  }
+
   describe("With no folder"){
     it("Should create the folder structure"){
       if(Files.exists(Paths.get(".sgit"))) {
@@ -20,9 +27,7 @@ class FolderManipulationTests extends FunSpec {
       assert(Files.exists(Paths.get(".sgit/objects")))
       assert(Files.exists(Paths.get(".sgit/staged")))
       assert(Files.readString(Paths.get(".sgit/HEAD")) == "ref: refs/heads/master")
-      val _ : File = ".sgit"
-        .toFile
-        .delete()
+
     }
   }
 
@@ -32,9 +37,6 @@ class FolderManipulationTests extends FunSpec {
         .toFile
         .createIfNotExists(asDirectory = true)
       assert(!FolderManipulation.createFolderStructure())
-      val _ : File = ".sgit"
-        .toFile
-        .delete()
     }
   }
 }
