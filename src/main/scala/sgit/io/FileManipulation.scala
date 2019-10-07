@@ -12,7 +12,11 @@ object FileManipulation {
       .toFile
     val content = stagedFile.contentAsString().split("\n")
 
-    content.map((file: String) => file.toFile)
+    content.map((file: String) => {
+      val stored: File = (".sgit/objects/"+file)
+          .toFile
+      stored
+    })
   }
 
   /**
@@ -55,5 +59,9 @@ object FileManipulation {
       val rootDir = ".sgit".toFile.parent
       rootDir.glob(fileName).toSeq
     }
+  }
+  def compareFiles(file1: File, file2: File): Option[Boolean] = {
+    if (!file1.exists || !file2.exists) None
+    else Some(file1.isSameContentAs(file2))
   }
 }
