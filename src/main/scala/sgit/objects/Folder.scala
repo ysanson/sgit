@@ -1,3 +1,3 @@
 package sgit.objects
 
-case class Folder(children: Seq[TreeObject], path: String) extends TreeObject
+case class Folder(children: Seq[TreeObject], path: String, shaPrint: String) extends TreeObject

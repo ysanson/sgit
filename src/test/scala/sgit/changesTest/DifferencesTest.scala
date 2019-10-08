@@ -15,10 +15,10 @@ class DifferencesTest extends FunSpec with BeforeAndAfter {
       .delete()
   }
 
-  describe("With a given folder") {
+  /**describe("With a given folder") {
     it("Should list all subfolders.") {
       val res = Differences.findDifferentFiles(".".toFile)
       assert(res.isEmpty)
     }
-  }
+  }*/
 }

@@ -53,20 +53,20 @@ object FolderManipulation {
       //Gets the stored files content's.
       val storedFiles = storedFolder.children.map((ch: TreeObject) => {
         ch match {
-          case blob: Blob => blob.content.substring(blob.content.indexOf('\n'))
+          case blob: Blob => blob.shaPrint
           case _ => null
         }
       })
       //Gets the stored files' names.
       val storedFileNames = storedFolder.children.map((ch: TreeObject) => {
         ch match {
-          case blob: Blob => blob.content.substring(0, blob.content.indexOf('\n'))
+          case blob: Blob => blob.path
           case _ => null
         }
       })
 
       //Files that content is different from the stored version.
-      val modifiedFiles: Seq[File] = files.filter(file => storedFiles.contains(file.contentAsString)).toSeq
+      val modifiedFiles: Seq[File] = files.filterNot(file => storedFiles.contains(file.sha1)).toSeq
       //Files that name doesn't appear in the stored file names.
       val newFiles: Seq[File] = files.filterNot(file => storedFileNames.contains(FileManipulation.relativizeFilePath(file).get)).toSeq
       //Files that name appears in the stored file names but not in the working directory.

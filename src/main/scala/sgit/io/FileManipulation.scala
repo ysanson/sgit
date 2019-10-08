@@ -1,25 +1,41 @@
 package sgit.io
 
 import better.files._
+import sgit.objects.{Blob, StagedFile}
 
 object FileManipulation {
+
   /**
-   * Gets the staged files from the sgit folder.
-   * @return a sequence of files
+   * Retrieves the file from the storage.
+   * @param signature the file signature
+   * @return the file.
    */
-  def retrieveStagedFiles(): Seq[File] = {
-    val stagedFile : File = ".sgit/staged"
-      .toFile
-    val content = stagedFile.contentAsString().split("\n")
-    content.map((file: String) => (".sgit/objects/"+file).toFile)
+  def retrieveFileFromObjects(signature: String): Option[File] = {
+    if((".sgit/objects/"+signature).toFile.exists) Some((".sgit/objects/"+signature).toFile)
+    else None
   }
 
   /**
-   * Gets the staged file names.
-   * @return a sequence of string indicating the file names.
+   * Removes a file from the storage.
+   * @param signature the signature of the file
+   * @return None if the file doesn't exist, true if it has been deleted.
    */
-  def retrieveStagedFileNames(): Seq[String] = retrieveStagedFiles().map(f => f.contentAsString.substring(0, f.contentAsString.indexOf('\n')))
+  def removeFileFromObjects(signature: String): Option[Boolean] = {
+    val file = retrieveFileFromObjects(signature)
+    if(file.isEmpty) return None
+    file.get.delete()
+    Some(true)
+  }
 
+  /**
+   * Writes a file in the objects folder.
+   * @param file the input file
+   */
+  def writeFileInObject(file: File): Unit = (".sgit/objects/"+file.sha1)
+    .toFile
+    .overwrite(relativizeFilePath(file).get)
+    .appendLine()
+    .appendLine(file.contentAsString)
   /**
    * Gets the file path from the root of the working directory.
    * @param file the file to relativize the path from
@@ -35,35 +51,14 @@ object FileManipulation {
    * Creates a file in the objects folder for each entry file.
    * @return the sha1 hashes for each file, or none if the directory does not exist.
    */
-  def addFilesToObjects(files: Seq[File]): Option[Seq[String]] = {
+  def addFilesToObjects(files: Seq[File]): Option[Seq[Blob]] = {
     if(!".sgit/objects".toFile.exists) None
     else {
       val res = files.iterator.map(f => {
-        val _ : File = (".sgit/objects/" + f.sha1)
-          .toFile
-          .overwrite(relativizeFilePath(f).getOrElse("UNKNOWN"))
-          .appendLine()
-          .appendLine(f.contentAsString)
-        f.sha1
+        writeFileInObject(f)
+        Blob(f.contentAsString, relativizeFilePath(f).get, f.sha1)
       }).toSeq
       Some(res)
-    }
-  }
-
-  /**
-   * Add files to the staged file.
-   * @param fileSignatures the sequence of file signatures (sha1)
-   * @return an option, None if the folder doesn't exist, true otherwise.
-   */
-  def addFilesToStaged(fileSignatures: Seq[String]): Option[Boolean] = {
-    if(!".sgit/staged".toFile.exists) None
-    else {
-      val stagedFile: File = ".sgit/staged".toFile
-      val content: String = stagedFile.contentAsString
-      fileSignatures.foreach(signature => {
-        if(!content.contains(signature)) stagedFile.appendLine(signature)
-      })
-      Some(true)
     }
   }
 

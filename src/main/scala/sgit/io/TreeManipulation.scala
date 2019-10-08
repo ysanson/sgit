@@ -16,8 +16,11 @@ object TreeManipulation {
         val contents: Array[String] = fileContent.split("\n").tail
         Folder(
           contents.tail.map((item: String) => searchTree(item)),
-          contents(0))
-      } else Blob(fileContent, fileContent.substring(0, fileContent.indexOf('\n')))
+          contents(0),
+          (".sgit/objects/" + base).toFile.name)
+      } else Blob(fileContent,
+          fileContent.substring(0, fileContent.indexOf('\n')),
+          (".sgit/objects/" + base).toFile.name)
     }
     searchTree(baseCommit.tree)
   }
