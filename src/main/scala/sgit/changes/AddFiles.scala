@@ -27,6 +27,7 @@ object AddFiles {
       def findFiles(files: Seq[JFile], res: Seq[File]): Seq[File] = {
         if(files.isEmpty) return res
         val firstFile: JFile = files.head
+        if(firstFile.getPath.contains(".sgit")) return res
         if(firstFile.isDirectory)
           findFiles(files.tail, res ++ listFolder(firstFile))
         else {
@@ -53,7 +54,9 @@ object AddFiles {
       }
 
       val duplicates: Seq[String] = stagedFiles.get.map(f => f.name)
+      println("dup1: " + duplicates)
       val singleDup: Seq[String] = duplicates.intersect(duplicates.distinct).distinct
+      println("dup2: " + singleDup)
       val dupFiles: Seq[StagedFile] = stagedFiles.get.filter(f => singleDup.contains(f.name))
       val filesToDelete: Seq[File] = dupFiles
         .map(file => {

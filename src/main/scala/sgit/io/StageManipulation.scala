@@ -9,15 +9,14 @@ object StageManipulation {
    * @return a sequence of files
    */
   def retrieveStagedFiles(): Option[Seq[StagedFile]] = {
-    val stagedFile : File = ".sgit/staged"
-      .toFile
+    val stagedFile : File = ".sgit/staged".toFile
     if(!stagedFile.exists) None
     else {
-      val content = stagedFile.contentAsString().split("\n")
+      val content = stagedFile.contentAsString().split("\n").filterNot(string => string.isEmpty)
       if(content.isEmpty) return None
       Some(content.map((file: String) => {
         val ids = file.split(" ")
-        StagedFile(ids(0), ids(1))
+        StagedFile(ids(0), ids(1).replace("\r", ""))
       }))
     }
   }
@@ -33,7 +32,7 @@ object StageManipulation {
       val stagedFile: File = ".sgit/staged".toFile
       val content: String = stagedFile.contentAsString
       fileSignatures.foreach(file => {
-        if(!content.contains(file.shaPrint)) stagedFile.appendLine(file.shaPrint + " " + file.path)
+        if(!content.contains(file.shaPrint)) stagedFile.appendLine(file.shaPrint + " " + file.path.replace("\r", ""))
       })
       Some(true)
     }
