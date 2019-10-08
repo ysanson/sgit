@@ -1,8 +1,11 @@
 package sgit.changes
 
 import java.io.{File => JFile}
+
 import better.files._
-import sgit.io.{FileManipulation, ConsoleOutput}
+import sgit.io.{ConsoleOutput, FileManipulation}
+
+import scala.annotation.tailrec
 
 object AddFiles {
   /**
@@ -19,9 +22,24 @@ object AddFiles {
    * @return a sequence of files corresponding to the actual files.
    */
   def getFiles(files: Seq[JFile]): Seq[File] = {
-    if(files.head.getName == '.') searchForNewFiles()
-    else
-      files.flatMap(file => FileManipulation.getFile(file.getPath))
+      @tailrec
+      def findFiles(files: Seq[JFile], res: Seq[File]): Seq[File] = {
+        if(files.isEmpty) return res
+        val firstFile: JFile = files.head
+        if(firstFile.isDirectory)
+          findFiles(files.tail, res ++ listFolder(firstFile))
+        else {
+          if(firstFile.exists()) findFiles(files.tail, res:+firstFile.toString.toFile)
+          else findFiles(files.tail, res)
+        }
+      }
+
+    def listFolder(folder: JFile): Seq[File] ={
+      if(!folder.isDirectory) return null
+      val contents: Seq[JFile] = folder.listFiles()
+      findFiles(contents, Seq[File]())
+    }
+    findFiles(files, Seq[File]()).filterNot(file => file == null)
   }
 
   /**

@@ -20,8 +20,13 @@ object FileManipulation {
    */
   def retrieveStagedFileNames(): Seq[String] = retrieveStagedFiles().map(f => f.contentAsString.substring(0, f.contentAsString.indexOf('\n')))
 
+  /**
+   * Gets the file path from the root of the working directory.
+   * @param file the file to relativize the path from
+   * @return an option containing the path, or none if the path doesn't exist.
+   */
   def relativizeFilePath(file: File): Option[String] = {
-    if(!".sgit".toFile.exists) return None
+    if(!".sgit".toFile.exists || !file.exists) return None
     val rootDir = ".sgit".toFile.parent
     Some(rootDir.relativize(file).toString)
   }
@@ -36,8 +41,9 @@ object FileManipulation {
       val res = files.iterator.map(f => {
         val _ : File = (".sgit/objects/" + f.sha1)
           .toFile
-          .appendLine(relativizeFilePath(f).getOrElse("UNKNOWN"))
-          .appendText(f.contentAsString)
+          .overwrite(relativizeFilePath(f).getOrElse("UNKNOWN"))
+          .appendLine()
+          .appendLine(f.contentAsString)
         f.sha1
       }).toSeq
       Some(res)
@@ -47,13 +53,16 @@ object FileManipulation {
   /**
    * Add files to the staged file.
    * @param fileSignatures the sequence of file signatures (sha1)
-   * @return an option, None if the fodler doesn't exist, true otherwise.
+   * @return an option, None if the folder doesn't exist, true otherwise.
    */
   def addFilesToStaged(fileSignatures: Seq[String]): Option[Boolean] = {
     if(!".sgit/staged".toFile.exists) None
     else {
       val stagedFile: File = ".sgit/staged".toFile
-      fileSignatures.foreach(signature => stagedFile.appendLine(signature))
+      val content: String = stagedFile.contentAsString
+      fileSignatures.foreach(signature => {
+        if(!content.contains(signature)) stagedFile.appendLine(signature)
+      })
       Some(true)
     }
   }
@@ -64,7 +73,7 @@ object FileManipulation {
    * @return a sequence of files.
    */
   def getFile(fileName: String): Seq[File] = {
-    if(!fileName.contains('*') || fileName.toFile.exists) Seq(fileName.toFile)
+    if(!fileName.contains('*') && (fileName.toFile.exists && !fileName.toFile.isDirectory)) Seq(fileName.toFile)
     else {
       val rootDir = ".sgit".toFile.parent
       rootDir.glob(fileName).toSeq
