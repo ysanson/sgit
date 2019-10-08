@@ -15,6 +15,7 @@ class AddFilesTests  extends FunSpec with BeforeAndAfter  {
     val _ : File = ".sgit"
       .toFile
       .delete()
+    if("test.txt".toFile.exists) "test.txt".toFile.delete()
   }
 
   describe("With a new file to add"){
