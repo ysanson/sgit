@@ -1,10 +1,11 @@
 name := "sgit"
 
-version := "0.1"
+version := "0.4"
 
 scalaVersion := "2.13.1"
 
 mainClass in (Compile, packageBin) := Some("sgit.main.Main")
+scalacOptions ++= Seq("-deprecation", "-feature")
 
 //Parses the command line arguments and options
 libraryDependencies ++= Seq(
@@ -18,4 +19,4 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
 //Test frameworks
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.8"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
-resolvers += "Artima Maven Repository" at "https://repo.artima.com/releases"
+parallelExecution in Test := false
