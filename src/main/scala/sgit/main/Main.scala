@@ -1,11 +1,9 @@
-package sgitTests.main
-
-import java.io.File
+package sgit.main
 
 import org.backuity.clist.Cli
-import sgitTests.main.commands._
-import sgitTests.create.InitializeRepository
-import sgitTests.changes.AddFiles
+import sgit.changes.AddFiles
+import sgit.create.InitializeRepository
+import sgit.main.commands.{Add, Commit, Diff, Init, Status}
 
 /**
  * Main entry point of the application.

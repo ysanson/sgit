@@ -1,7 +1,7 @@
-package sgitTests.io
+package sgit.io
 
 import better.files._
-import sgitTests.objects.{Blob, StagedFile}
+import sgit.objects.Blob
 
 object FileManipulation {
 

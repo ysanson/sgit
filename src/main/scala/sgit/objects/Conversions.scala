@@ -1,4 +1,4 @@
-package sgitTests.objects
+package sgit.objects
 
 import scala.annotation.tailrec
 

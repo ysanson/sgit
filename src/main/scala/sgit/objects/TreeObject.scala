@@ -1,4 +1,4 @@
-package sgitTests.objects
+package sgit.objects
 
 trait TreeObject{
   val path: String

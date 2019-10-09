@@ -1,8 +1,9 @@
-package sgitTests.io
+package sgit.io
 
 import java.nio.file.{Files, Paths}
+
 import better.files._
-import sgitTests.objects._
+import sgit.objects.{Blob, Folder, TreeObject}
 
 /**
  * Contains all the methods to manipulate folders in the project.

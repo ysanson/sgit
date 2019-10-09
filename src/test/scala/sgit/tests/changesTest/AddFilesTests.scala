@@ -1,9 +1,9 @@
-package sgitTests.changesTest
+package sgit.tests.changesTest
 
 import org.scalatest._
-import sgitTests.changes.AddFiles
 import better.files._
-import sgitTests.create.InitializeRepository
+import sgit.changes.AddFiles
+import sgit.create.InitializeRepository
 
 class AddFilesTests  extends FunSpec with BeforeAndAfter with Matchers {
 

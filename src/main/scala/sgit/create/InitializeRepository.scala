@@ -1,6 +1,6 @@
-package sgitTests.create
+package sgit.create
 
-import sgitTests.io.{ConsoleOutput, FolderManipulation}
+import sgit.io.{ConsoleOutput, FolderManipulation}
 
 object InitializeRepository {
   def createFolder(): Unit = {

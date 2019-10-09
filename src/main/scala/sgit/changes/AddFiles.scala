@@ -1,10 +1,12 @@
-package sgitTests.changes
+package sgit.changes
 
 import java.io.{File => JFile}
 
 import better.files._
-import sgitTests.io.{ConsoleOutput, FileManipulation, StageManipulation}
-import sgitTests.objects.{Blob, StagedFile, Conversions}
+import sgit.io.{ConsoleOutput, FileManipulation, StageManipulation}
+import sgit.objects.{Blob, Conversions, StagedFile}
+import sgit.io.{ConsoleOutput, FileManipulation, StageManipulation}
+import sgit.objects.{Blob, Conversions, StagedFile}
 
 import scala.annotation.tailrec
 

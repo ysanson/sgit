@@ -1,9 +1,10 @@
-package sgitTests.ioTests
+package sgit.tests.ioTests
 
 import org.scalatest._
 import java.nio.file.{Files, Paths}
-import sgitTests.io.FolderManipulation
+
 import better.files._
+import sgit.io.FolderManipulation
 
 class FolderManipulationTests extends FunSpec with BeforeAndAfter with Matchers {
 

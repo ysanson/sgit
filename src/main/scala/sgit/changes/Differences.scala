@@ -1,8 +1,8 @@
-package sgitTests.changes
+package sgit.changes
 
 import better.files._
-import sgitTests.io._
-import sgitTests.objects._
+import sgit.io.{CommitManipulation, FileManipulation, FolderManipulation, TreeManipulation}
+import sgit.objects.{Blob, Commit, Folder, TreeObject}
 
 object Differences {
   /**
@@ -23,7 +23,7 @@ object Differences {
     if (commit.isEmpty) return None
 
     val currentCommit: Commit = CommitManipulation.findCommitInfos(commit.get)
-    val tree: TreeObject = TreeManipulation.extractTree(currentCommit)
+    val tree: TreeObject = TreeManipulation.extractTreeFromCommit(currentCommit)
 
     val diffs = content.get
       .flatMap(file => {
