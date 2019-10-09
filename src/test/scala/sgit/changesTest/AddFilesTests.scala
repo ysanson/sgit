@@ -41,7 +41,7 @@ class AddFilesTests  extends FunSpec with BeforeAndAfter  {
 
         assert((".sgit/objects/" + test.sha1).toFile.exists)
         assert((".sgit/objects/" + test.sha1).toFile.contentAsString.contains(firstFileContent))
-        //assert(secondStageContent.contains(firstStageContent))
+        assert(secondStageContent.contains(firstStageContent))
       }
     }
     describe("But it has been modified") {

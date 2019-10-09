@@ -4,7 +4,7 @@ import java.io.{File => JFile}
 
 import better.files._
 import sgit.io.{ConsoleOutput, FileManipulation, StageManipulation}
-import sgit.objects.{Blob, StagedFile}
+import sgit.objects.{Blob, StagedFile, Conversions}
 
 import scala.annotation.tailrec
 
@@ -44,48 +44,46 @@ object AddFiles {
     findFiles(files, Seq[File]()).filterNot(file => file == null)
   }
 
-  def deleteDuplicatedStagedFiles(): Unit = {
-    val stagedFiles: Option[Seq[StagedFile]] = StageManipulation.retrieveStagedFiles()
-    if(stagedFiles.isDefined){
+  /**
+   * Finds the duplicated files between the old stage and the new stage.
+   * If the sha prints are different but the name is the same, it removes the old file from the final stage
+   * @param addedFiles The new files from the most recent add call.
+   * @param existingFiles the existing files in the stage.
+   * @return a tupe of sequence of files. _1 contains the new stage, _2 contains the files to delete.
+   */
+  def findDuplicatedStagedFiles(addedFiles: Seq[StagedFile], existingFiles: Seq[StagedFile]): (Seq[StagedFile], Seq[StagedFile]) = {
+    if(existingFiles == null || existingFiles.isEmpty) return (addedFiles, Seq())
 
-      def findMostRecentFile(files: Seq[(String, File)]): Seq[File] = {
-        val f: Seq[File] = files.map(v => v._2)
-        f.filter(file => file != f.max(File.Order.byModificationTime))
-      }
+    val addedNames: Seq[String] = addedFiles.map(f => f.name)
+    val addedSHA: Seq[String] = addedFiles.map(f => f.shaPrint)
+    //We keep the files that are duplicated but that don't have the same SHA than the added files.
+    val filesToDelete: Seq[StagedFile] =
+      existingFiles.filter(old => addedNames.contains(old.name) && !addedSHA.contains(old.shaPrint))
 
-      val duplicates: Seq[String] = stagedFiles.get.map(f => f.name)
-      println("dup1: " + duplicates)
-      val singleDup: Seq[String] = duplicates.intersect(duplicates.distinct).distinct
-      println("dup2: " + singleDup)
-      val dupFiles: Seq[StagedFile] = stagedFiles.get.filter(f => singleDup.contains(f.name))
-      val filesToDelete: Seq[File] = dupFiles
-        .map(file => {
-          val stored = FileManipulation.retrieveFileFromObjects(file.shaPrint).orNull
-          (file.name, stored)
-        })
-        .groupBy(v => v._1)
-        .flatMap((group: (String, Seq[(String, File)])) => findMostRecentFile(group._2)).toSeq
-      val shaToDelete: Seq[String] = filesToDelete.map(file => file.name) //Because it's the stored files (ie the names are the sha1 keys)
-      StageManipulation.removeFilesFromStaged(shaToDelete)
-      shaToDelete.foreach(sha => FileManipulation.removeFileFromObjects(sha))
-    }
+    (addedFiles.concat(existingFiles.diff(filesToDelete)), filesToDelete)
   }
 
   /**
    * Adds certain files to the stage.
+   * This method is not RT nor pure
    * @param files the files given by the user.
    */
   def add(files: Seq[JFile]): Unit = {
-    val addedFiles: Option[Seq[Blob]] = FileManipulation.addFilesToObjects(getFiles(files))
+    val addedFiles: Option[Seq[Blob]] = FileManipulation.addFilesToObjects(getFiles(files)) //Has side effects
     if(addedFiles.isEmpty)
       ConsoleOutput.printToScreen("sgit had not been initialized. Please run sgit init.")
     else {
-      val staged: Option[Boolean] = StageManipulation.addFilesToStaged(addedFiles.get)
+      val existingStagedFiles = StageManipulation.retrieveStagedFiles().orNull
+      val contentAndOlds: (Seq[StagedFile], Seq[StagedFile]) =
+        findDuplicatedStagedFiles(Conversions.convertBlobsToStagedFiles(addedFiles.get), existingStagedFiles)
+
+      if(contentAndOlds._2.nonEmpty)
+        contentAndOlds._2.foreach(file => FileManipulation.removeFileFromObjects(file.shaPrint)) //Has side effects
+      val staged: Option[Boolean] = StageManipulation.addFilesToStaged(contentAndOlds._1) //Has side effects
 
       if(staged.isEmpty)
         ConsoleOutput.printToScreen("Cannot add the files to the stage.")
       else {
-        deleteDuplicatedStagedFiles()
         ConsoleOutput.printToScreen("Successfully added files to the stage!")
       }
     }
