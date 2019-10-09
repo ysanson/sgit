@@ -40,7 +40,7 @@ object AddFiles {
 
     def listFolder(folder: JFile): Seq[File] ={
       if(!folder.isDirectory) return null
-      val contents: Seq[JFile] = folder.listFiles()
+      val contents: Seq[JFile] = folder.listFiles().toIndexedSeq
       findFiles(contents, Seq[File]())
     }
     findFiles(files, Seq[File]()).filterNot(file => file == null)
