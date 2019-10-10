@@ -21,7 +21,7 @@ class CommitFilesTest extends FunSpec with BeforeAndAfter with Matchers {
 
   describe("With no files in the stage") {
     it("Should print an error and exit.") {
-      assert(!CommitFiles.commit())
+      assert(CommitFiles.commit().isEmpty)
     }
   }
 
@@ -29,24 +29,24 @@ class CommitFilesTest extends FunSpec with BeforeAndAfter with Matchers {
     describe("And no commits"){
       it("Should return true") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        assert(CommitFiles.commit())
+        assert(CommitFiles.commit().nonEmpty)
       }
       it("Should create a branch called master which references the commit") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
+        val res = CommitFiles.commit()
         assert(".sgit/refs/heads/master".toFile.exists)
-        ".sgit/refs/heads/master".toFile.contentAsString should include ("62CD197701282E719139FBAE702F511DF66449C4")
+        ".sgit/refs/heads/master".toFile.contentAsString should include (res.get)
       }
       it("Should create a commit file in the objects folder") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
+        val res = CommitFiles.commit()
         ".sgit/objects/".toFile.children.toSeq should have length 2
-        assert(".sgit/objects/62CD197701282E719139FBAE702F511DF66449C4".toFile.exists)
+        assert((".sgit/objects/"+res.get).toFile.exists)
       }
-      it("Should be referenced by the last commit") {
+      it("Should be referenced by the last commit method") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
-        CommitManipulation.findMostRecentCommit().get should include ("62CD197701282E719139FBAE702F511DF66449C4")
+        val res = CommitFiles.commit()
+        CommitManipulation.findMostRecentCommit().get should include (res.get)
       }
       it("Should have one child") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
@@ -67,21 +67,21 @@ class CommitFilesTest extends FunSpec with BeforeAndAfter with Matchers {
       }
       it("Should change the head") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
+        val first = CommitFiles.commit()
         "test.txt".toFile.appendLine("This is another test! :)")
         AddFiles.add(Seq("test.txt".toFile.toJava))
         CommitFiles.commit()
-        CommitManipulation.findMostRecentCommit().get should not include ("62CD197701282E719139FBAE702F511DF66449C4")
+        CommitManipulation.findMostRecentCommit().get should not include (first.get)
       }
       it("Should reference the last commit as a parent") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
+        val parent = CommitFiles.commit()
         "test.txt".toFile.appendLine("This is another test! :)")
         AddFiles.add(Seq("test.txt".toFile.toJava))
-        CommitFiles.commit()
+        val curr = CommitFiles.commit()
         val commit = CommitManipulation.findCommitInfos(CommitManipulation.findMostRecentCommit().get).get
-        commit.parents.head should include ("62CD197701282E719139FBAE702F511DF66449C4")
-        commit.name should include ("99EFC5740F3157CECC4AFC5B264F5A34E7FA71C6")
+        commit.parents.head should include (parent.get)
+        commit.name should include (curr.get)
       }
       describe("And a file with the same name"){
         it("Should have only one file referenced"){

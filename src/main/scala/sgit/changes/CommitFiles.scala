@@ -5,27 +5,27 @@ import sgit.objects.{Commit, StagedFile}
 
 object CommitFiles {
 
-  def executeCommit(files: Seq[StagedFile], description: String, parents: (String,String)): Unit = {
+  def executeCommit(files: Seq[StagedFile], description: String, parents: (String,String)): String = {
     val commitSha = CommitManipulation.createCommit(files, description, parents)
     val branchName = RefManipulation.updateCurrBranch(commitSha)
     StageManipulation.emptyStage()
     ConsoleOutput.printToScreen("New commit " + commitSha + " at branch " + branchName.get)
+    commitSha
   }
 
   /**
    * Creates a new commit in the repository.
    */
-  def commit(): Boolean = {
+  def commit(): Option[String] = {
     val lastCommit: Option[String] = CommitManipulation.findMostRecentCommit()
     val stagedFiles: Option[Seq[StagedFile]] = StageManipulation.retrieveStagedFiles()
 
     if(stagedFiles.isEmpty) {
       ConsoleOutput.printError("No files have been staged. Please run sgit add <files>")
-      false
+      None
     }
     else if(lastCommit.isEmpty) {
-      executeCommit(stagedFiles.get, "Initial commit", ("", ""))
-      true
+      Some(executeCommit(stagedFiles.get, "Initial commit", ("", "")))
     } else {
 
       val last: Commit = CommitManipulation.findCommitInfos(lastCommit.get).get
@@ -34,8 +34,7 @@ object CommitFiles {
         if(newFilesNames.contains(file.name)) stagedFiles.get.filter(f => f.name == file.name).head
         else file
       }).toIndexedSeq
-      executeCommit(newList.concat(stagedFiles.get).distinct, "A description", (last.name, ""))
-      true
+      Some(executeCommit(newList.concat(stagedFiles.get).distinct, "A description", (last.name, "")))
     }
   }
 }
