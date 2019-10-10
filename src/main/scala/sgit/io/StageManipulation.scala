@@ -1,7 +1,7 @@
 package sgit.io
 
 import better.files._
-import sgit.objects.StagedFile
+import sgit.objects.{Folder, StagedFile, TreeObject}
 
 import scala.annotation.tailrec
 
@@ -12,7 +12,7 @@ object StageManipulation {
    */
   def retrieveStagedFiles(): Option[Seq[StagedFile]] = {
     val stagedFile : File = ".sgit/staged".toFile
-    if(!stagedFile.exists) None
+    if(!stagedFile.exists || stagedFile.isEmpty) None
     else {
       val content = stagedFile.contentAsString()
         .replace("\r", "")
@@ -60,13 +60,19 @@ object StageManipulation {
     }
   }
 
-  def convertToStagedFile(files: Seq[File]): Seq[StagedFile] = {
-    @tailrec
-    def convert(files: Seq[File], res: Seq[StagedFile]): Seq[StagedFile] = {
-      if (files.isEmpty) return res
-      convert(files.tail, res :+ StagedFile(files.head.sha1, FileManipulation.relativizeFilePath(files.head).orNull))
+  def createTreeFromStage(): Option[TreeObject] = {
+
+    def createTree(files: Seq[Array[String]], tree: TreeObject): TreeObject = {
+      if(files.isEmpty) tree
+      null
     }
-    convert(files, Seq())
+    val stagedFiles: Option[Seq[StagedFile]] = retrieveStagedFiles()
+    if(stagedFiles.isEmpty) None
+    else {
+      val stagedPaths: Seq[Array[String]] = stagedFiles.get.map(file => file.name.split("/"))
+      //Some(createTree(stagedPaths, Folder()))
+      None
+    }
   }
 
 }

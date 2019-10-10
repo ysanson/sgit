@@ -22,7 +22,7 @@ object TreeManipulation {
           contents(0),
           (".sgit/objects/" + base).toFile.name)
       } else Blob(fileContent,
-          fileContent.substring(0, fileContent.indexOf('\n')),
+          fileContent.substring(0, fileContent.indexOf('\n')).replace("\\", "/"),
           (".sgit/objects/" + base).toFile.name)
     }
     searchTree(baseCommit.tree)
@@ -41,7 +41,9 @@ object TreeManipulation {
       val first: File = children.head
       if(first.isDirectory) addChildren(children.tail, result:+createTreeForWorkingDir(first).get)
       else {
-        val blob: TreeObject = Blob(first.contentAsString, FileManipulation.relativizeFilePath(first).get, first.sha1)
+        val blob: TreeObject = Blob(first.contentAsString,
+          FileManipulation.relativizeFilePath(first).get.replace("\\", "/"),
+          first.sha1)
         addChildren(children.tail, blob+:result)
       }
     }
@@ -59,23 +61,53 @@ object TreeManipulation {
       Some(objects.Folder(children, FileManipulation.relativizeFilePath(baseDir).get, baseDir.sha1))
     }
   }
+
   /**
-   * Searches for a specific TreeObject (either a file or a folder)
-   * @param tree the base folder to search
-   * @param path the path searched
-   * @return an option containing the request, or none if not found.
+   * Finds an element in an array of children.
+   * If none is found, returns None.
+   * If a folder is found, searches in the folder.
+   * @param elements the elements to search in.
+   * @param path The path to search.
+   * @return An optional treeObject
    */
-  def searchInTree(tree: TreeObject, path: String): Option[TreeObject] = {
-    if(tree.path == path) Some(tree)
+  @tailrec
+  def findInChildren(elements: Seq[TreeObject], path: String): Option[TreeObject] = {
+    if(elements.isEmpty) None
     else {
-      tree match {
-        case folder: Folder =>
-          folder.children
-            .map(child => searchInTree(child, path))
-            .filterNot(result => result.isEmpty)
-            .head
+      val firstElt: TreeObject = elements.head
+      if (firstElt.isInstanceOf[Folder]) searchInTree(firstElt, path)
+      else if (firstElt.path == path) Some(firstElt)
+      else findInChildren(elements.tail, path)
+    }
+  }
+
+  /**
+   * Searches in the tree for an object. If a folder is found, calls findInChildren to explore the children.
+   * If None is found, returns None.
+   * @param treeObject the tree element to search.
+   * @param path the path to search.
+   * @return An optional TreeObject.
+   */
+  def searchInTree(treeObject: TreeObject, path: String): Option[TreeObject] = {
+    if(treeObject.path == path) Some(treeObject)
+    else {
+      treeObject match{
+        case folder: Folder => findInChildren(folder.children, path)
         case _ => None
       }
     }
   }
+
+  /**
+   * Checks if the path exists in the directory.
+   * @param treeObject the tree object to search in.
+   * @param path The path to search for.
+   * @return True if found, false otherwise.
+   */
+  def existsInTree(treeObject: TreeObject, path: String): Boolean = {
+    val elt = searchInTree(treeObject, path)
+    if(elt.nonEmpty) true
+    else false
+  }
+
 }
