@@ -35,7 +35,7 @@ object FolderManipulation {
     val _ : File = ".sgit/HEAD"
       .toFile
       .createIfNotExists(asDirectory = false, createParents = true)
-      .append("ref: refs/heads/master")
+      .append("refs/heads/master")
     true
   }
 
@@ -93,6 +93,10 @@ object FolderManipulation {
         .toList
       Some(dirList)
     }
+  }
 
+  def listAllChildren(baseDir: File): Option[List[File]] = {
+    if(!baseDir.isDirectory && ".sgit".toFile.exists) None
+    else Some(baseDir::baseDir.listRecursively.toList)
   }
 }

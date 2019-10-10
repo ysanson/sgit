@@ -5,7 +5,7 @@ import better.files._
 import sgit.changes.AddFiles
 import sgit.create.InitializeRepository
 
-class AddFilesTests  extends FunSpec with BeforeAndAfter with Matchers {
+class AddFilesTests extends FunSpec with BeforeAndAfter with Matchers {
 
   before{
     if("test.txt".toFile.exists) "test.txt".toFile.delete()

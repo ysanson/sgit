@@ -12,7 +12,7 @@ object TreeManipulation {
    * @param baseCommit the commit
    * @return the tree of files.
    */
-  def extractTreeFromCommit(baseCommit: Commit): TreeObject = {
+  /*def extractTreeFromCommit(baseCommit: Commit): TreeObject = {
     def searchTree(base: String): TreeObject = {
       val fileContent: String = (".sgit/objects/" + base).toFile.contentAsString
       if(fileContent.startsWith("node")) {
@@ -26,7 +26,7 @@ object TreeManipulation {
           (".sgit/objects/" + base).toFile.name)
     }
     searchTree(baseCommit.tree)
-  }
+  }*/
 
   /**
    * Adds the children of a folder to the tree.
@@ -84,14 +84,14 @@ object TreeManipulation {
   /**
    * Searches in the tree for an object. If a folder is found, calls findInChildren to explore the children.
    * If None is found, returns None.
-   * @param treeObject the tree element to search.
+   * @param tree the tree element to search.
    * @param path the path to search.
    * @return An optional TreeObject.
    */
-  def searchInTree(treeObject: TreeObject, path: String): Option[TreeObject] = {
-    if(treeObject.path == path) Some(treeObject)
+  def searchInTree(tree: TreeObject, path: String): Option[TreeObject] = {
+    if(tree.path == path) Some(tree)
     else {
-      treeObject match{
+      tree match{
         case folder: Folder => findInChildren(folder.children, path)
         case _ => None
       }
@@ -100,12 +100,12 @@ object TreeManipulation {
 
   /**
    * Checks if the path exists in the directory.
-   * @param treeObject the tree object to search in.
+   * @param tree the tree object to search in.
    * @param path The path to search for.
    * @return True if found, false otherwise.
    */
-  def existsInTree(treeObject: TreeObject, path: String): Boolean = {
-    val elt = searchInTree(treeObject, path)
+  def existsInTree(tree: TreeObject, path: String): Boolean = {
+    val elt = searchInTree(tree, path)
     if(elt.nonEmpty) true
     else false
   }

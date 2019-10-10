@@ -25,7 +25,7 @@ class FolderManipulationTests extends FunSpec with BeforeAndAfter with Matchers 
       assert(".sgit/refs/tags".toFile.exists)
       assert(".sgit/objects".toFile.exists)
       assert(".sgit/staged".toFile.exists)
-      ".sgit/HEAD".toFile.contentAsString should include ("ref: refs/heads/master")
+      ".sgit/HEAD".toFile.contentAsString should include ("refs/heads/master")
     }
   }
 

@@ -34,7 +34,7 @@ object StageManipulation {
   def addFilesToStaged(fileSignatures: Seq[StagedFile]): Option[Boolean] = {
     if(!".sgit/staged".toFile.exists) None
     else {
-      val stagedFile: File = ".sgit/staged".toFile.overwrite("")
+      val stagedFile: File = ".sgit/staged".toFile.createIfNotExists().overwrite("")
       val content: String = stagedFile.contentAsString
       fileSignatures.foreach(file => {
         if(!content.contains(file.shaPrint)) stagedFile.appendLine(file.shaPrint + " " + file.name)
@@ -60,19 +60,12 @@ object StageManipulation {
     }
   }
 
-  def createTreeFromStage(): Option[TreeObject] = {
-
-    def createTree(files: Seq[Array[String]], tree: TreeObject): TreeObject = {
-      if(files.isEmpty) tree
-      null
-    }
-    val stagedFiles: Option[Seq[StagedFile]] = retrieveStagedFiles()
-    if(stagedFiles.isEmpty) None
-    else {
-      val stagedPaths: Seq[Array[String]] = stagedFiles.get.map(file => file.name.split("/"))
-      //Some(createTree(stagedPaths, Folder()))
-      None
-    }
+  /**
+   * Empties the stage file.
+   */
+  def emptyStage(): Unit = {
+    if(".sgit/staged".toFile.exists) ".sgit/staged".toFile.delete()
+    ".sgit/staged".toFile.createIfNotExists()
   }
 
 }

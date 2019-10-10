@@ -35,4 +35,18 @@ object Conversions {
     }
     convert(files, Seq())
   }
+
+  def convertStagedFilesToBlobs(staged: Seq[StagedFile]): Seq[Blob] = {
+    @tailrec
+    def convert(files: Seq[StagedFile], res: Seq[Blob]): Seq[Blob] = {
+      if(files.isEmpty) res
+      else {
+        val stagedHead: StagedFile = staged.head
+        val file: File = FileManipulation.retrieveFileFromObjects(stagedHead.shaPrint).get
+        val blob= Blob(file.contentAsString.substring(file.contentAsString.indexOf("\n")), stagedHead.name, stagedHead.shaPrint)
+        convert(files.tail, res:+blob)
+      }
+    }
+    convert(staged, Seq())
+  }
 }

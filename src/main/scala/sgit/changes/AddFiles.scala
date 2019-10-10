@@ -53,7 +53,7 @@ object AddFiles {
    * If the sha prints are different but the name is the same, it removes the old file from the final stage
    * @param addedFiles The new files from the most recent add call.
    * @param existingFiles the existing files in the stage.
-   * @return a tupe of sequence of files. _1 contains the new stage, _2 contains the files to delete.
+   * @return a tuple of sequence of files. _1 contains the new stage, _2 contains the files to delete.
    */
   def findDuplicatedStagedFiles(addedFiles: Seq[StagedFile], existingFiles: Seq[StagedFile]): (Seq[StagedFile], Seq[StagedFile]) = {
     if(existingFiles == null || existingFiles.isEmpty) return (addedFiles, Seq())

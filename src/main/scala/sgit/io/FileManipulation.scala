@@ -85,4 +85,13 @@ object FileManipulation {
     if (!file1.exists || !file2.exists) None
     else Some(file1.isSameContentAs(file2))
   }
+
+  /**
+   * Searches for the untracked files in the directory.
+   * @param files the files to check
+   * @return a list of untracked files.
+   */
+  def searchUntrackedFiles(files: Seq[File]): Seq[File] =
+    files.filterNot(file => file.isDirectory &&( ".sgit/objects." + file.sha1).toFile.exists)
+
 }
