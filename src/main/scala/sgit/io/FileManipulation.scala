@@ -92,6 +92,6 @@ object FileManipulation {
    * @return a list of untracked files.
    */
   def searchUntrackedFiles(files: Seq[File]): Seq[File] =
-    files.filterNot(file => file.isDirectory &&( ".sgit/objects." + file.sha1).toFile.exists)
+    files.filterNot(file => (".sgit/objects/" + file.sha1).toFile.exists)
 
 }

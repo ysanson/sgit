@@ -63,10 +63,12 @@ object Differences {
     if (!baseFolder.isDirectory) return None
     val content: Option[List[File]] = FolderManipulation.listAllChildren(baseFolder)
     val stagedFiles = StageManipulation.retrieveStagedFiles()
-    if (content.isEmpty && stagedFiles.isEmpty) return None
-    val diff = getDifferentFiles(content.get, stagedFiles.get.map(file => file.shaPrint), Seq())
-    if(diff.isEmpty) None
-    else Some(diff)
+    if (content.isEmpty || stagedFiles.isEmpty) None
+    else{
+      val diff = getDifferentFiles(content.get, stagedFiles.get.map(file => file.shaPrint), Seq())
+      if(diff.isEmpty) None
+      else Some(diff)
+    }
   }
 
   /**
@@ -77,21 +79,23 @@ object Differences {
     else {
       val rootDir: File = ".sgit".toFile.parent
       val stageDiff: Option[Seq[File]] = findDifferentFilesFromStage(rootDir)
-      if(stageDiff.isEmpty) return
-      else {
-        val allFiles = rootDir.listRecursively.toIndexedSeq:+rootDir
-        val untracked: Seq[File] = FileManipulation.searchUntrackedFiles(allFiles)
+      val allFiles: List[File] = FolderManipulation.listAllChildren(rootDir).get.filterNot(file => file.isDirectory)
+      val untracked: Seq[File] = FileManipulation.searchUntrackedFiles(allFiles)
+      ConsoleOutput.printToScreen("Untracked files: ")
+      untracked.foreach(file => ConsoleOutput.printYellow("untracked- " + FileManipulation.relativizeFilePath(file).get))
+      /*
+      if(stageDiff.nonEmpty){
         val diffFromStage = findDifferentFilesFromStage(rootDir)
         if(diffFromStage.isEmpty) return
+
         val supp = diffFromStage.get.diff(allFiles)
         val add = allFiles.diff(diffFromStage.get)
-        ConsoleOutput.printToScreen("Untracked files: ")
-        untracked.foreach(file => ConsoleOutput.printToScreen("untracked- " + FileManipulation.relativizeFilePath(file)))
+
         ConsoleOutput.printToScreen("\nDeleted files: ")
-        supp.foreach(file => ConsoleOutput.printToScreen("deleted- " + FileManipulation.relativizeFilePath(file)))
+        supp.foreach(file => ConsoleOutput.printRed("deleted- " + FileManipulation.relativizeFilePath(file).get))
         ConsoleOutput.printToScreen("\nAdded files: ")
-        add.foreach(file => ConsoleOutput.printToScreen("added- " + FileManipulation.relativizeFilePath(file)))
-      }
+        add.foreach(file => ConsoleOutput.printGreen("added- " + FileManipulation.relativizeFilePath(file).get))
+      }*/
     }
   }
 }

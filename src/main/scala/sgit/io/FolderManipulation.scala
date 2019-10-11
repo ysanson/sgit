@@ -85,18 +85,20 @@ object FolderManipulation {
    * @return an option containing a list of files.
    */
   def listSubDirectories(baseDir: File): Option[List[File]] = {
-    if(!baseDir.isDirectory && ".sgit".toFile.exists) None
+    val children = listAllChildren(baseDir)
+    if(children.isEmpty) None
     else {
-      val dirList: List[File] = baseDir::baseDir
-        .listRecursively()
-        .filter(file => file.isDirectory)
-        .toList
-      Some(dirList)
+      Some(children.get.filter(file => file.isDirectory))
     }
   }
 
+  /**
+   * Lists all children from a given directory.
+   * @param baseDir the base directory.
+   * @return
+   */
   def listAllChildren(baseDir: File): Option[List[File]] = {
     if(!baseDir.isDirectory && ".sgit".toFile.exists) None
-    else Some(baseDir::baseDir.listRecursively.toList)
+    else Some(baseDir::baseDir.listRecursively.filterNot(file => file.pathAsString.contains(".sgit")).toList)
   }
 }
