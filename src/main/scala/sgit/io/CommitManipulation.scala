@@ -1,7 +1,9 @@
 package sgit.io
 
+import java.util.Date
+
 import better.files._
-import sgit.objects.{Commit, StagedFile}
+import sgit.objects.{CommitObject, StagedFile}
 
 object CommitManipulation {
   /**
@@ -26,7 +28,7 @@ object CommitManipulation {
    * @param commit the commit id
    * @return a, option with a commit object containing the infos.
    */
-  def findCommitInfos(commit: String): Option[Commit] = {
+  def findCommitInfos(commit: String): Option[CommitObject] = {
     if(!(".sgit/objects/"+commit).toFile.exists) return None
 
     val values: Array[String] = (".sgit/objects/" + commit).toFile
@@ -38,12 +40,23 @@ object CommitManipulation {
       StagedFile(content(0), content(1))
     }).toList
 
-    Some(Commit(
-      commit,
-      values(0),
-      values(1).split(" ").toIndexedSeq,
-      files
-    ))
+    if(values(1).isEmpty){
+      Some(CommitObject(
+        commit,
+        values(0),
+        Seq(""),
+        Date.from((".sgit/objects/" + commit).toFile.lastModifiedTime),
+        files
+      ))
+    } else {
+      Some(CommitObject(
+        commit,
+        values(0),
+        values(1).split(" ").toIndexedSeq,
+        Date.from((".sgit/objects/" + commit).toFile.lastModifiedTime),
+        files
+      ))
+    }
   }
 
   /**

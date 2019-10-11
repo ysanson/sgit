@@ -3,8 +3,7 @@ package sgit.changes
 import java.io.{File => JFile}
 
 import better.files._
-import sgit.io.{ConsoleOutput, FileManipulation, StageManipulation}
-import sgit.objects.{Blob, Conversions, StagedFile}
+import sgit.io.{CommitManipulation, ConsoleOutput, FileManipulation, StageManipulation}
 import sgit.io.{ConsoleOutput, FileManipulation, StageManipulation}
 import sgit.objects.{Blob, Conversions, StagedFile}
 
@@ -22,7 +21,7 @@ object AddFiles {
   /**
    * Gets the files from the working directory
    * @param files a sequence of Java files given by the user.
-   * @return a sequence of files corresponding to the actual files.
+   * @return a sequence of files (from the betterfile library) corresponding to the actual files.
    */
   def getFiles(files: Seq[JFile]): Seq[File] = {
       @tailrec
@@ -68,6 +67,20 @@ object AddFiles {
   }
 
   /**
+   * Removes the files that has not been modified from the previous commit.
+   * @param newFiles the new files to add.
+   * @return the new files minus the not modified ones.
+   */
+  def findNotModifiedFiles(newFiles: Seq[StagedFile]): Seq[StagedFile] = {
+    val lastCommit = CommitManipulation.findMostRecentCommit()
+    if(lastCommit.isEmpty) newFiles
+    else {
+      val committedFiles: List[StagedFile] = CommitManipulation.findCommitInfos(lastCommit.get).get.files
+      newFiles.diff(committedFiles)
+    }
+  }
+
+  /**
    * Adds certain files to the stage.
    * This method is not RT nor pure
    * @param files the files given by the user.
@@ -91,7 +104,7 @@ object AddFiles {
         }
         deleteObjects(contentAndOlds._2)
       }
-      val staged: Option[Boolean] = StageManipulation.addFilesToStaged(contentAndOlds._1) //Has side effects
+      val staged: Option[Boolean] = StageManipulation.addFilesToStaged(findNotModifiedFiles(contentAndOlds._1)) //Has side effects
 
       if(staged.isEmpty)
         ConsoleOutput.printToScreen("Cannot add the files to the stage.")

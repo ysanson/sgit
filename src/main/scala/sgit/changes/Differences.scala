@@ -2,7 +2,7 @@ package sgit.changes
 
 import better.files._
 import sgit.io.{CommitManipulation, ConsoleOutput, FileManipulation, FolderManipulation, StageManipulation, TreeManipulation}
-import sgit.objects.{Blob, Commit, Conversions, Folder, StagedFile, TreeObject}
+import sgit.objects.{Blob, CommitObject, Conversions, Folder, StagedFile, TreeObject}
 
 import scala.annotation.tailrec
 
@@ -24,7 +24,7 @@ object Differences {
 
     if (commit.isEmpty) return None
 
-    val currentCommit: Commit = CommitManipulation.findCommitInfos(commit.get).get
+    val currentCommit: CommitObject = CommitManipulation.findCommitInfos(commit.get).get
     //TODO: Change the implementation
     /*val tree: TreeObject = TreeManipulation.extractTreeFromCommit(currentCommit)
 

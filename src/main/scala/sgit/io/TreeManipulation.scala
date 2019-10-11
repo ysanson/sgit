@@ -2,7 +2,7 @@ package sgit.io
 
 import better.files._
 import sgit.objects
-import sgit.objects.{Blob, Commit, Folder, TreeObject}
+import sgit.objects.{Blob, CommitObject, Folder, TreeObject}
 
 import scala.annotation.tailrec
 
