@@ -36,6 +36,11 @@ object Conversions {
     convert(files, Seq())
   }
 
+  /**
+   * Converts staged files to blobs.
+   * @param staged the files to convert
+   * @return the blobs
+   */
   def convertStagedFilesToBlobs(staged: Seq[StagedFile]): Seq[Blob] = {
     @tailrec
     def convert(files: Seq[StagedFile], res: Seq[Blob]): Seq[Blob] = {
@@ -49,4 +54,11 @@ object Conversions {
     }
     convert(staged, Seq())
   }
+
+  /**
+   * gets the names and the sha prints from a sequence of staged files.
+   * @param stagedFiles the staged files.
+   * @return a tuple, the first one containing the name and the second the sha prints.
+   */
+  def nameAndShaFromStageFiles(stagedFiles: Seq[StagedFile]): (Seq[String], Seq[String]) = (stagedFiles.map(f => f.name), stagedFiles.map(f => f.shaPrint))
 }

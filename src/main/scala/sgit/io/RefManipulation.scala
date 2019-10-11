@@ -18,4 +18,14 @@ object RefManipulation {
         .overwrite(newSha)
         .name)
   }
+
+  def getBranchName: String = {
+    if(!".sgit/HEAD".toFile.exists) ""
+    else {
+      ".sgit/HEAD".toFile
+        .contentAsString
+        .split("/")
+        .last
+    }
+  }
 }
