@@ -6,7 +6,7 @@ import sgit.objects.{Blob, CommitObject, Conversions, Folder, StagedFile, TreeOb
 
 import scala.annotation.tailrec
 
-object Status {
+object WorkspaceStatus {
 
   /**
    * Finds the different files between the stage and the working dir.
