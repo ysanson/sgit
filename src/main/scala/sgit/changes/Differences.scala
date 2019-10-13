@@ -98,6 +98,20 @@ object Differences {
   }
 
   /**
+   * Finds the deleted files in the working directory.
+   * @param workingDir the working directory
+   * @param filesInObject the files in object.
+   * @return
+   */
+  def findDeletedFiles(workingDir: Seq[File], filesInObject: Option[Seq[StagedFile]]): Option[Seq[StagedFile]] = {
+    if(filesInObject.isEmpty) return None
+    val filesNames: Seq[String] = workingDir.map(f => FileManipulation.relativizeFilePath(f).get)
+    val del = filesInObject.get.filterNot(f => filesNames.contains(f.name))
+    if(del.isEmpty) None
+    else Some(del)
+  }
+
+  /**
    * Gets the files that are not staged for commit, by comparing the files from the working dir with the
    * staged and the committed (stored) ones.
    *
@@ -158,16 +172,24 @@ object Differences {
       val commit = CommitManipulation.findCommitInfos(CommitManipulation.findMostRecentCommit().getOrElse("null"))
       if(commit.isEmpty) ConsoleOutput.printToScreen("No commit yet\n\n")
       else ConsoleOutput.printToScreen("Last commit is " + commit.get.name + "\n\n")
+
       if (commit.isEmpty && stageDiff.isEmpty) ConsoleOutput.printUntrackedFiles(notInObjects)
       else {
-
+        val deletedFiles: Option[Seq[StagedFile]] = findDeletedFiles(allFiles, if(commit.isEmpty) None else Some(commit.get.files))
         val commitFiles: Option[Seq[StagedFile]] = if(commit.isEmpty) None else Some(commit.get.files)
         val tbc = readyToBeCommitted(stageDiff, commitFiles)
         val nsfc = notStagedForCommit(notInObjects, commitFiles, stageDiff)
         if (tbc.nonEmpty)
           ConsoleOutput.printChangedToBeCommitted(tbc.get)
-        if (nsfc._1.nonEmpty)
+        println(deletedFiles)
+        if (nsfc._1.nonEmpty && deletedFiles.isEmpty)
           ConsoleOutput.printChangesNotStaged(nsfc._1.get)
+        else if(nsfc._1.nonEmpty && deletedFiles.nonEmpty) {
+          val deleted: Seq[String] = deletedFiles.get.map(f => "   - deleted: " + f.name)
+          ConsoleOutput.printChangesNotStaged(nsfc._1.get.concat(deleted))
+        }
+        else if(nsfc._1.isEmpty && deletedFiles.nonEmpty)
+          ConsoleOutput.printChangesNotStaged(deletedFiles.get.map(f => "   - deleted: " + f.name))
         if (nsfc._2.nonEmpty)
           ConsoleOutput.printUntrackedFiles(nsfc._2)
       }
