@@ -14,7 +14,7 @@ object Tags {
       false
     }
     else {
-      tags.get.foreach(tag => ConsoleOutput.printToScreen(tag._1 + ": " + tag._2))
+      tags.get.foreach(tag => ConsoleOutput.printYellow(tag._1 + " -> " + tag._2))
       true
     }
   }

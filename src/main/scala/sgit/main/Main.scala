@@ -4,8 +4,8 @@ import org.backuity.clist.Cli
 import sgit.changes.{AddFiles, CommitFiles, WorkspaceStatus}
 import sgit.create.InitializeRepository
 import sgit.logs.Logs
-import sgit.branches.Tags
-import sgit.main.commands.{Add, Commit, Diff, Init, Status, Log, Tag}
+import sgit.branches.{Tags, Branches}
+import sgit.main.commands.{Add, Commit, Diff, Init, Status, Log, Tag, Branch}
 
 /**
  * Main entry point of the application.
@@ -15,7 +15,7 @@ object Main extends App {
   Cli.parse(args)
     .withProgramName("sgit")
     .version("0.5")
-    .withCommands(Init, Status, Diff, Commit, Add, Log, Tag) match {
+    .withCommands(Init, Status, Diff, Commit, Add, Log, Tag, Branch) match {
     case Some(Init) => InitializeRepository.createFolder()
     case Some(Status) => WorkspaceStatus.status()
     case Some(Diff) => println("Diff")
@@ -23,6 +23,7 @@ object Main extends App {
     case Some(Add) => AddFiles.add(Add.files)
     case Some(Log) => Logs.showLog(Log.overtime, Log.stat)
     case Some(Tag) => Tags.handleTag(Tag.tagName)
+    case Some(Branch) => Branches.handleBranches(Branch.branchName)
     case None => println("No arguments")
     case _ => println("Error")
   }

@@ -11,7 +11,7 @@ object Branches {
   def listBranches(): Boolean = {
     val branches = RefManipulation.getAllBranches
     if(branches.isEmpty){
-      ConsoleOutput.printError("No branches yet. Try committing something with sgit commit.")
+      ConsoleOutput.printError("No commits yet. Try committing something with sgit commit.")
       false
     } else {
       branches.get.foreach(branch => ConsoleOutput.printGreen("Branch " + branch._1 + " -> " + branch._2))
@@ -37,7 +37,7 @@ object Branches {
         val isCreated = RefManipulation.createBranch(branchName.get, commit.get)
         if(isCreated) {
           RefManipulation.updateHead(branchName.get)
-          ConsoleOutput.printGreen(" Created branch " + branchName.get + " at commit " + commit.get)
+          ConsoleOutput.printGreen("Created branch " + branchName.get + " at commit " + commit.get)
           true
         } else {
           ConsoleOutput.printError("Cannot create branch right now.")
