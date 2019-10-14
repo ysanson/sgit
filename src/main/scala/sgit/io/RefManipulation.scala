@@ -57,7 +57,40 @@ object RefManipulation {
     if(".sgit/refs/tags".toFile.isEmpty) None
     else {
       val tags = ".sgit/refs/tags".toFile.children.toIndexedSeq.sorted(File.Order.byModificationTime)
-      Some(tags.map(tag => (tag.name, tag.contentAsString.replace("\r", ""))).toMap)
+      Some(tags.map(tag => (tag.name, tag.contentAsString)).toMap)
     }
   }
+
+  /**
+   * Creates a new branch. Does not override an existing branch.
+   * @param branchName the new branch name
+   * @param commitName the commit to reference.
+   * @return true if the branch has been created, false otherwise.
+   */
+  def createBranch(branchName: String, commitName: String): Boolean = {
+    if((".sgit/refs/heads/"+branchName).toFile.exists) false
+    else {
+      (".sgit/refs/heads/"+branchName).toFile.append(commitName)
+      true
+    }
+  }
+
+  /**
+   * Returns all the branches.
+   * @return An optional map of branches, name -> commit
+   */
+  def getAllBranches: Option[Map[String, String]] = {
+    if(".sgit/refs/heads".toFile.isEmpty) None
+    else {
+      val branches = ".sgit/refs/heads".toFile.children.toIndexedSeq.sorted(File.Order.byModificationTime)
+      Some(branches.map(branch => (branch.name, branch.contentAsString)).toMap)
+    }
+  }
+
+  /**
+   * Updates the current branch to the new head.
+   * @param newBranch the new branch to refer.
+   */
+  def updateHead(newBranch: String): Unit = ".sgit/HEAD".toFile.createIfNotExists().overwrite("refs/heads/"+newBranch)
+
 }

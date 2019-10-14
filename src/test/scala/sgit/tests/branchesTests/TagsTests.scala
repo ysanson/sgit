@@ -2,7 +2,6 @@ package sgit.tests.branchesTests
 
 import org.scalatest._
 import better.files._
-import net.bytebuddy.dynamic.scaffold.TypeInitializer.None
 import sgit.changes.{AddFiles, CommitFiles}
 import sgit.create.InitializeRepository
 import sgit.branches.Tags

@@ -71,7 +71,7 @@ class CommitFilesTest extends FunSpec with BeforeAndAfter with Matchers {
         "test.txt".toFile.appendLine("This is another test! :)")
         AddFiles.add(Seq("test.txt".toFile.toJava))
         CommitFiles.commit("")
-        CommitManipulation.findMostRecentCommit().get should not include (first.get)
+        CommitManipulation.findMostRecentCommit().get should not include first.get
       }
       it("Should reference the last commit as a parent") {
         AddFiles.add(Seq("test.txt".toFile.toJava))
