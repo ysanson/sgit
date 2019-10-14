@@ -1,4 +1,4 @@
-package sgit.tests.changesTest
+package sgit.tests.changesTests
 
 import org.scalatest.{BeforeAndAfter, FunSpec, Matchers}
 import better.files._

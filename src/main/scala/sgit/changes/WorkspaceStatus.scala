@@ -9,36 +9,6 @@ import scala.annotation.tailrec
 object WorkspaceStatus {
 
   /**
-   * Finds the different files between the stage and the working dir.
-   *
-   * @param baseFolder the base folder
-   * @return a optional list of files
-   */
-  def findDifferentFilesFromStage(baseFolder: File): Option[Seq[File]] = {
-    @tailrec
-    def getDifferentFiles(objects: Seq[File], shaToCheck: Seq[String], diff: Seq[File]): Seq[File] = {
-      if (objects.isEmpty) diff
-      else {
-        val currentFile: File = objects.head
-        if (shaToCheck.contains(currentFile.sha1))
-          getDifferentFiles(objects.tail, shaToCheck, diff)
-        else
-          getDifferentFiles(objects.tail, shaToCheck.tail, diff :+ currentFile)
-      }
-    }
-
-    if (!baseFolder.isDirectory) return None
-    val content: Option[List[File]] = FolderManipulation.listAllChildren(baseFolder)
-    val stagedFiles = StageManipulation.retrieveStagedFiles()
-    if (content.isEmpty || stagedFiles.isEmpty) None
-    else {
-      val diff = getDifferentFiles(content.get, stagedFiles.get.map(file => file.shaPrint), Seq())
-      if (diff.isEmpty) None
-      else Some(diff)
-    }
-  }
-
-  /**
    * Lists the files ready to be committed.
    * if no commit, all files are listed as added.
    *

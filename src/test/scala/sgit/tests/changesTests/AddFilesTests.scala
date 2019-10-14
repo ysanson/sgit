@@ -1,4 +1,4 @@
-package sgit.tests.changesTest
+package sgit.tests.changesTests
 
 import org.scalatest._
 import better.files._
