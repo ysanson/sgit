@@ -16,6 +16,20 @@ object FileManipulation {
   }
 
   /**
+   * Transforms the file in the objects to a blob.
+   * @param signature the file's signature.
+   * @return an optional blob.
+   */
+  def findBlob(signature: String): Option[Blob] = {
+    val file = retrieveFileFromObjects(signature)
+    if(file.isEmpty) None
+    else {
+      val content = file.get.contentAsString.replace("\r", "")
+      Some(Blob(content.substring(content.indexOf("\n")), content.substring(0, content.indexOf("\n")), file.get.sha1))
+    }
+  }
+
+  /**
    * Removes a file from the storage.
    * @param signature the signature of the file
    * @return None if the file doesn't exist, true if it has been deleted.
@@ -43,7 +57,7 @@ object FileManipulation {
    */
   def relativizeFilePath(file: File): Option[String] = {
     if(!".sgit".toFile.exists || !file.exists) return None
-    val rootDir = ".sgit".toFile.parent
+    val rootDir = ".".toFile
     Some(rootDir.relativize(file).toString)
   }
   /**
@@ -67,10 +81,10 @@ object FileManipulation {
    * @param fileName the file name or the regular expression.
    * @return a sequence of files.
    */
-  def getFile(fileName: String): Seq[File] = {
+  def findFile(fileName: String): Seq[File] = {
     if(!fileName.contains('*') && (fileName.toFile.exists && !fileName.toFile.isDirectory)) Seq(fileName.toFile)
     else {
-      val rootDir = ".sgit".toFile.parent
+      val rootDir = ".".toFile
       rootDir.glob(fileName).toSeq
     }
   }
@@ -93,5 +107,11 @@ object FileManipulation {
    */
   def searchUntrackedFiles(files: Seq[File]): Seq[File] =
     files.filterNot(file => (".sgit/objects/" + file.sha1).toFile.exists)
+
+  def writeBlobInWorkingDir(blob: Blob): Unit = {
+    blob.path.toFile
+      .createIfNotExists(asDirectory = false, createParents = true)
+      .overwrite(blob.content)
+  }
 
 }

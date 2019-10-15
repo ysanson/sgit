@@ -29,7 +29,7 @@ object CommitManipulation {
    * @return a, option with a commit object containing the infos.
    */
   def findCommitInfos(commit: String): Option[CommitObject] = {
-    if(!(".sgit/objects/"+commit).toFile.exists) return None
+    if(!(".sgit/objects/"+commit).toFile.exists || (".sgit/objects/"+commit).toFile.isDirectory) return None
 
     val values: Array[String] = (".sgit/objects/" + commit).toFile
       .contentAsString.replace("\r", "")

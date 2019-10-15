@@ -34,7 +34,7 @@ object AddFiles {
             findFiles(files.tail, res ++ listFolder(firstFile))
           else {
             if(firstFile.exists()) findFiles(files.tail, res:+firstFile.toString.toFile)
-            else findFiles(files.tail, res)
+            else findFiles(files.tail, res ++ FileManipulation.findFile(firstFile.getName))
           }
         }
       }

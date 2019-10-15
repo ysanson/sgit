@@ -5,6 +5,13 @@ import sgit.objects.{CommitObject, StagedFile}
 
 object CommitFiles {
 
+  /**
+   * Registers the commit in the objects.
+   * @param files the files to commit
+   * @param description the description
+   * @param parents The commit's parents.
+   * @return the commit SHA.
+   */
   def executeCommit(files: Seq[StagedFile], description: String, parents: (String,String)): String = {
     val commitSha = CommitManipulation.createCommit(files, description, parents)
     val branchName = RefManipulation.updateCurrBranch(commitSha)
@@ -15,6 +22,7 @@ object CommitFiles {
 
   /**
    * Creates a new commit in the repository.
+   * @return the commit SHA or none if error.
    */
   def commit(description: String): Option[String] = {
     val lastCommit: Option[String] = CommitManipulation.findMostRecentCommit()
