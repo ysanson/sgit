@@ -22,23 +22,23 @@ class BranchesTests extends FunSpec with BeforeAndAfter with Matchers {
 
   describe("With no commit"){
     it("Should not branch"){
-      val res = Branches.handleBranches(Some("branch"))
+      val res = Branches.handleBranches(Some("branch"), verbose = false)
       assert(!res)
     }
   }
   describe("With a branch existing") {
     it("Should create a new branch"){
       CommitFiles.commit("")
-      assert(Branches.handleBranches(Some("branch")))
+      assert(Branches.handleBranches(Some("branch"), verbose = false))
     }
     it("Should reference the same commit as the last") {
       val res: String = CommitFiles.commit("").get
-      Branches.handleBranches(Some("branch"))
+      Branches.handleBranches(Some("branch"), verbose = false)
       ".sgit/refs/heads/branch".toFile.contentAsString should include (res)
     }
     it("Should be referenced as the HEAD"){
       CommitFiles.commit("")
-      Branches.handleBranches(Some("branch"))
+      Branches.handleBranches(Some("branch"), verbose = false)
       RefManipulation.getBranchName should equal ("branch")
     }
   }

@@ -44,7 +44,7 @@ class RestoreTests extends FunSpec with BeforeAndAfter with Matchers  {
   describe("With a new branch"){
     it("Should update the head"){
       CommitFiles.commit("")
-      Branches.handleBranches(Some("newBranch"))
+      Branches.handleBranches(Some("newBranch"), verbose = false)
       val res = Restore.checkout("newBranch")
       assert(res)
       RefManipulation.getBranchName should equal ("newBranch")
@@ -52,7 +52,7 @@ class RestoreTests extends FunSpec with BeforeAndAfter with Matchers  {
     it("Should discard the modification of the commit") {
       val firstCommit = CommitFiles.commit("").get
       "test.txt".toFile.appendLine("Hello there")
-      Branches.handleBranches(Some("newBranch"))
+      Branches.handleBranches(Some("newBranch"), verbose = false)
       AddFiles.add(Seq("test.txt".toFile.toJava))
       val secondCommit = CommitFiles.commit("Second commit").get
       Restore.checkout("master")

@@ -108,10 +108,13 @@ object FileManipulation {
   def searchUntrackedFiles(files: Seq[File]): Seq[File] =
     files.filterNot(file => (".sgit/objects/" + file.sha1).toFile.exists)
 
-  def writeBlobInWorkingDir(blob: Blob): Unit = {
+  /**
+   * Writes a blob in the working directory, at the path specified in the bloc object.
+   * @param blob the blob to write.
+   */
+  def writeBlobInWorkingDir(blob: Blob): Unit =
     blob.path.toFile
       .createIfNotExists(asDirectory = false, createParents = true)
       .overwrite(blob.content)
-  }
 
 }
