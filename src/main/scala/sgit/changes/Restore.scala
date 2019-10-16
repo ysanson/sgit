@@ -1,6 +1,6 @@
 package sgit.changes
 
-import sgit.io.{CommitManipulation, ConsoleOutput, FileManipulation, RefManipulation}
+import sgit.io.{CommitManipulation, ConsoleOutput, FileManipulation, RefManipulation, StageManipulation}
 import sgit.objects.{Blob, StagedFile}
 
 import scala.annotation.tailrec
@@ -46,8 +46,12 @@ object Restore {
    */
   def checkout(name: String): Boolean = {
     val lastCommit = CommitManipulation.findMostRecentCommit()
+    val stagedFiles = StageManipulation.retrieveStagedFiles()
     if(lastCommit.isEmpty) {
       ConsoleOutput.printError("No commits yet. Please commit and / or create tags/branches.")
+      false
+    }else if(stagedFiles.nonEmpty) {
+      ConsoleOutput.printError("Some files have been staged but not committed. PLease rnu sgit commit before checkout.")
       false
     }
     else {
