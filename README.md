@@ -17,4 +17,8 @@ When running the `sbt assembly` command, the produced JAR file is created at `/t
 
 The JAR archive is executable with the command `java -jar sgit-assembly-xx.jar` in the directory, assuming Java is installed.
 
-However, to avoid copying the jar file everytime we try to create a repository, the next thing to do is adding it to the `PATH`.
+However, to avoid copying the jar file everytime we try to create a repository, the next thing to do is adding it with an alias. To achieve this, edit the terminal config file. On Linux/MacOS, edit either `.bashrc`or `.bash_profile`, if using the bash terminal.
+
+In the config file, set an alias:
+- `alias sgit='java -jar /path/to/jar/sgit-assembly-xx.jar` on bash
+- `Set-Alias -Name sgit -Value java -jar /path/to/jar/sgit-assembly-xx.jar` on Powershell

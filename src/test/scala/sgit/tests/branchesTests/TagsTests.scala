@@ -4,10 +4,11 @@ import org.scalatest._
 import better.files._
 import sgit.changes.{AddFiles, CommitFiles}
 import sgit.create.InitializeRepository
-import sgit.branches.Tags
+import sgit.refs.Tags
 import sgit.io.{CommitManipulation, RefManipulation}
 
 class TagsTests extends FunSpec with BeforeAndAfter with Matchers {
+
   before{
     if("test.txt".toFile.exists) "test.txt".toFile.delete()
     if(".sgit".toFile.exists) ".sgit".toFile.delete()

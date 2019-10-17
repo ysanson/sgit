@@ -4,7 +4,7 @@ import org.scalatest._
 import better.files._
 import sgit.changes.{AddFiles, CommitFiles}
 import sgit.create.InitializeRepository
-import sgit.branches.Branches
+import sgit.refs.Branches
 import sgit.io.{CommitManipulation, RefManipulation}
 
 class BranchesTests extends FunSpec with BeforeAndAfter with Matchers {

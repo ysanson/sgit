@@ -1,4 +1,4 @@
-package sgit.branches
+package sgit.refs
 
 import sgit.io.{CommitManipulation, ConsoleOutput, RefManipulation}
 

@@ -25,7 +25,7 @@ object FileManipulation {
     if(file.isEmpty) None
     else {
       val content = file.get.contentAsString.replace("\r", "")
-      Some(Blob(content.substring(content.indexOf("\n")), content.substring(0, content.indexOf("\n")), file.get.sha1))
+      Some(Blob(content.substring(content.indexOf("\n")), content.substring(0, content.indexOf("\n")+1), file.get.sha1))
     }
   }
 
@@ -45,11 +45,12 @@ object FileManipulation {
    * Writes a file in the objects folder.
    * @param file the input file
    */
-  def writeFileInObject(file: File): Unit = (".sgit/objects/"+file.sha1)
-    .toFile
-    .overwrite(relativizeFilePath(file).get)
-    .appendLine()
-    .appendLine(file.contentAsString)
+  def writeFileInObject(file: File): Unit =
+    (".sgit/objects/"+file.sha1)
+      .toFile
+      .overwrite(relativizeFilePath(file).get)
+      .appendLine()
+      .append(file.contentAsString)
   /**
    * Gets the file path from the root of the working directory.
    * @param file the file to relativize the path from

@@ -4,7 +4,7 @@ import org.backuity.clist.Cli
 import sgit.changes.{AddFiles, CommitFiles, WorkspaceStatus, Restore}
 import sgit.create.InitializeRepository
 import sgit.logs.Logs
-import sgit.branches.{Tags, Branches}
+import sgit.refs.{Tags, Branches}
 import sgit.main.commands.{Add, Commit, Diff, Init, Status, Log, Tag, Branch, Checkout}
 
 /**

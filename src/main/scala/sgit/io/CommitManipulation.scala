@@ -11,6 +11,7 @@ object CommitManipulation {
    * @return the commit id.
    */
   def findMostRecentCommit(): Option[String] = {
+    if(!".sgit".toFile.exists) return None
     val ref : String = ".sgit/HEAD"
       .toFile
       .contentAsString()

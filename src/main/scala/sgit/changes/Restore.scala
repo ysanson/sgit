@@ -51,7 +51,7 @@ object Restore {
       ConsoleOutput.printError("No commits yet. Please commit and / or create tags/branches.")
       false
     }else if(stagedFiles.nonEmpty) {
-      ConsoleOutput.printError("Some files have been staged but not committed. PLease rnu sgit commit before checkout.")
+      ConsoleOutput.printError("Some files have been staged but not committed. Please run sgit commit before checkout.")
       false
     }
     else {

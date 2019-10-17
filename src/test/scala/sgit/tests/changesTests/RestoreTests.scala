@@ -2,7 +2,7 @@ package sgit.tests.changesTests
 
 import org.scalatest.{BeforeAndAfter, FunSpec, Matchers}
 import better.files._
-import sgit.branches.Branches
+import sgit.refs.Branches
 import sgit.changes.{AddFiles, CommitFiles, Restore}
 import sgit.io.{CommitManipulation, FolderManipulation, RefManipulation}
 
