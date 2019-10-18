@@ -25,7 +25,7 @@ object FileManipulation {
     if(file.isEmpty) None
     else {
       val content = file.get.contentAsString.replace("\r", "")
-      Some(Blob(content.substring(content.indexOf("\n")), content.substring(0, content.indexOf("\n")+1), file.get.sha1))
+      Some(Blob(content.substring(content.indexOf("\n")+1), content.substring(0, content.indexOf("\n")), file.get.sha1))
     }
   }
 

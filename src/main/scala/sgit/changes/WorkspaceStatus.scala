@@ -18,9 +18,8 @@ object WorkspaceStatus {
    */
   def readyToBeCommitted(stagedFiles: Option[Seq[StagedFile]], committedFiles: Option[Seq[StagedFile]]): Option[Seq[String]] = {
     if (stagedFiles.isEmpty) None
-    else if (committedFiles.isEmpty) {
-      Some(stagedFiles.get.map(file => "   - added: " + file.name))
-    } else {
+    else if (committedFiles.isEmpty) Some(stagedFiles.get.map(file => "   - added: " + file.name))
+    else {
       val committed = Conversions.nameAndShaFromStageFiles(committedFiles.get)
       //The name is not in the committed files
       val addedFiles: Seq[StagedFile] = stagedFiles.get.filterNot(file => committed._1.contains(file.name))
@@ -114,8 +113,7 @@ object WorkspaceStatus {
         val tbc = readyToBeCommitted(stageDiff, commitFiles)
         val nsfc = notStagedForCommit(notInObjects, commitFiles, stageDiff)
         if (tbc.nonEmpty)
-          ConsoleOutput.printChangedToBeCommitted(tbc.get)
-        println(deletedFiles)
+          ConsoleOutput.printChangesToBeCommitted(tbc.get)
         if (nsfc._1.nonEmpty && deletedFiles.isEmpty)
           ConsoleOutput.printChangesNotStaged(nsfc._1.get)
         else if(nsfc._1.nonEmpty && deletedFiles.nonEmpty) {

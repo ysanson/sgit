@@ -18,7 +18,7 @@ object ConsoleOutput {
     lines.foreach(file => printYellow("   untracked: " + FileManipulation.relativizeFilePath(file).get))
   }
 
-  def printChangedToBeCommitted(lines: Seq[String]): Unit = {
+  def printChangesToBeCommitted(lines: Seq[String]): Unit = {
     printToScreen("Changes to be committed:\n  (use sgit commit --message to commit them)")
     lines.foreach(l => printGreen(l))
   }
