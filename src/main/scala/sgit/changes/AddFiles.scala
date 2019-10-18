@@ -14,9 +14,7 @@ object AddFiles {
    * Searches for new files in the directory.
    * @return a sequence of files.
    */
-  def searchForNewFiles(): Seq[StagedFile] = {
-    StageManipulation.retrieveStagedFiles().get
-  }
+  def searchForNewFiles(): Seq[StagedFile] = StageManipulation.retrieveStagedFiles().get
 
   /**
    * Gets the files from the working directory
@@ -92,6 +90,7 @@ object AddFiles {
 
     else {
       val existingStagedFiles = StageManipulation.retrieveStagedFiles().orNull
+      //The first part is the existing files, the second is the old ones.
       val contentAndOlds: (Seq[StagedFile], Seq[StagedFile]) =
         findDuplicatedStagedFiles(Conversions.convertBlobsToStagedFiles(addedFiles.get), existingStagedFiles)
 

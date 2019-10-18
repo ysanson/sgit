@@ -90,6 +90,17 @@ object WorkspaceStatus {
   }
 
   /**
+   * Finds the files that are not in the branch (possibly present in the objects folder but not in the last commit or stage)
+   * @param files the files to check
+   * @param storedFiles the stored files
+   * @return the files that are not in the current branch.
+   */
+  def findFilesNotInBranch(files: Seq[File], storedFiles: Seq[StagedFile]): Seq[File] = {
+    val storedSha = storedFiles.map(store => store.shaPrint)
+    files.filterNot(file => storedSha.contains(file.sha1))
+  }
+
+  /**
    * Prints the status of the sgit.
    */
   def status(): Unit = {
@@ -101,17 +112,21 @@ object WorkspaceStatus {
       val stageDiff: Option[Seq[StagedFile]] = StageManipulation.retrieveStagedFiles()
       val allFiles: List[File] = FolderManipulation.listAllChildren(rootDir).get.filterNot(file => file.isDirectory)
       val notInObjects: Seq[File] = FileManipulation.searchUntrackedFiles(allFiles)
-
-      val commit = CommitManipulation.findCommitInfos(CommitManipulation.findMostRecentCommit().getOrElse("null"))
+      val commit = CommitManipulation.findMostRecentCommit()
       if(commit.isEmpty) ConsoleOutput.printToScreen("No commit yet\n\n")
       else ConsoleOutput.printToScreen("Last commit is " + commit.get.name + "\n\n")
 
       if (commit.isEmpty && stageDiff.isEmpty) ConsoleOutput.printUntrackedFiles(notInObjects)
-      else {
-        val deletedFiles: Option[Seq[StagedFile]] = findDeletedFiles(allFiles, if(commit.isEmpty) None else Some(commit.get.files))
-        val commitFiles: Option[Seq[StagedFile]] = if(commit.isEmpty) None else Some(commit.get.files)
+      else if(commit.nonEmpty) {
+        val commitInfos = CommitManipulation.findCommitInfos(commit.get)
+        val notInCurrentBranch = findFilesNotInBranch(allFiles, if(stageDiff.nonEmpty) commitInfos.get.files.concat(stageDiff.get) else commitInfos.get.files)
+        val deletedFiles: Option[Seq[StagedFile]] = findDeletedFiles(allFiles, if(commit.isEmpty) None else Some(commitInfos.get.files))
+        val commitFiles: Option[Seq[StagedFile]] = if(commit.isEmpty) None else Some(commitInfos.get.files)
+
+        //Changes ready to be committed
         val tbc = readyToBeCommitted(stageDiff, commitFiles)
-        val nsfc = notStagedForCommit(notInObjects, commitFiles, stageDiff)
+        //Changes that are not staged for commit. Also contains the untracked files at position 2
+        val nsfc: (Option[Seq[String]], Seq[File]) = notStagedForCommit(notInCurrentBranch, commitFiles, stageDiff)
         if (tbc.nonEmpty)
           ConsoleOutput.printChangesToBeCommitted(tbc.get)
         if (nsfc._1.nonEmpty && deletedFiles.isEmpty)
@@ -124,6 +139,8 @@ object WorkspaceStatus {
           ConsoleOutput.printChangesNotStaged(deletedFiles.get.map(f => "   - deleted: " + f.name))
         if (nsfc._2.nonEmpty)
           ConsoleOutput.printUntrackedFiles(nsfc._2)
+      } else{
+        ConsoleOutput.printYellow("No commits or staged files yet, nothing to show.")
       }
     }
   }
