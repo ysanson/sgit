@@ -106,8 +106,7 @@ object FileManipulation {
    * @param files the files to check
    * @return a list of untracked files.
    */
-  def searchUntrackedFiles(files: Seq[File]): Seq[File] =
-    files.filterNot(file => (".sgit/objects/" + file.sha1).toFile.exists)
+  def searchUntrackedFiles(files: Seq[File]): Seq[File] = files.filterNot(file => (".sgit/objects/" + file.sha1).toFile.exists)
 
   /**
    * Writes a blob in the working directory, at the path specified in the bloc object.

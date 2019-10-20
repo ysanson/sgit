@@ -12,7 +12,7 @@ object TreeManipulation {
    * @param baseCommit the commit
    * @return the tree of files.
    */
-  /*def extractTreeFromCommit(baseCommit: Commit): TreeObject = {
+  def extractTreeFromCommit(baseCommit: CommitObject): TreeObject = {
     def searchTree(base: String): TreeObject = {
       val fileContent: String = (".sgit/objects/" + base).toFile.contentAsString
       if(fileContent.startsWith("node")) {
@@ -25,8 +25,8 @@ object TreeManipulation {
           fileContent.substring(0, fileContent.indexOf('\n')).replace("\\", "/"),
           (".sgit/objects/" + base).toFile.name)
     }
-    searchTree(baseCommit.tree)
-  }*/
+    searchTree(baseCommit.name)
+  }
 
   /**
    * Adds the children of a folder to the tree.

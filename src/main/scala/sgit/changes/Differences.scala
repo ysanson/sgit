@@ -56,24 +56,6 @@ object Differences {
     }
   }
 
-  def listDifferences(filesFromWorkingDir: Seq[File]): Seq[String] = {
-    @tailrec
-    def findLines(files: Seq[(File, Blob)], res: Seq[(Seq[String], Seq[String])]): Seq[(Seq[String], Seq[String])] = {
-      if(files.isEmpty) res
-      else {
-        val fileAndSave: (File, Blob) = files.head
-        val workingFileContent = fileAndSave._1.contentAsString.replace("\r", "")
-        val newRes = res:+findDifferentLines(workingFileContent, fileAndSave._2.content).get
-        findLines(files.tail, newRes)
-      }
-    }
-
-    val filesAndStore: Seq[(File, Blob)] = filesFromWorkingDir
-      .map(file => (file, FileManipulation.findBlob(file.sha1).get))
-    val diffs = findLines(filesAndStore, Seq())
-    null
-  }
-
   /**
    * Finds the differences between two files.
    */
@@ -81,7 +63,7 @@ object Differences {
     if(!".sgit".toFile.exists) ConsoleOutput.printError("sgit have not been initialized. Please run sgit init.")
     val files = findDifferentFilesFromCommit(".".toFile)
     if(files.nonEmpty) {
-
+      ConsoleOutput.printError("Error: Diff is not yet implemented.")
     }
   }
 }
