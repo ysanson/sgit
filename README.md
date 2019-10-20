@@ -22,3 +22,7 @@ However, to avoid copying the jar file everytime we try to create a repository, 
 In the config file, set an alias:
 - `alias sgit='java -jar /path/to/jar/sgit-assembly-xx.jar` on bash
 - `Set-Alias -Name sgit -Value java -jar /path/to/jar/sgit-assembly-xx.jar` on Powershell
+
+Please note that the paths are absolute.
+
+Finally, reload the terminal, and you can use sgit everywhere.

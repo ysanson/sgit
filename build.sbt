@@ -1,6 +1,6 @@
 name := "sgit"
 
-version := "0.4"
+version := "1.0"
 
 scalaVersion := "2.13.1"
 
@@ -20,5 +20,4 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.8" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.1" % "test"
-libraryDependencies += "org.mockito" %% "mockito-scala" % "1.5.18" % "test"
 parallelExecution in Test := false
