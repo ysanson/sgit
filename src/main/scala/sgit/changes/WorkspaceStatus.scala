@@ -114,7 +114,7 @@ object WorkspaceStatus {
       val notInObjects: Seq[File] = FileManipulation.searchUntrackedFiles(allFiles)
       val commit = CommitManipulation.findMostRecentCommit()
       if(commit.isEmpty) ConsoleOutput.printToScreen("No commit yet\n\n")
-      else ConsoleOutput.printToScreen("Last commit is " + commit.get.name + "\n\n")
+      else ConsoleOutput.printToScreen("Last commit is " + commit.get + "\n\n")
 
       if (commit.isEmpty && stageDiff.isEmpty) ConsoleOutput.printUntrackedFiles(notInObjects)
       else if(commit.nonEmpty) {
@@ -140,7 +140,7 @@ object WorkspaceStatus {
         if (nsfc._2.nonEmpty)
           ConsoleOutput.printUntrackedFiles(nsfc._2)
       } else{
-        ConsoleOutput.printYellow("No commits or staged files yet, nothing to show.")
+        ConsoleOutput.printYellow("No commits or staged files yet, working tree clean.")
       }
     }
   }

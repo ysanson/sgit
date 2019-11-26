@@ -27,7 +27,7 @@ object CommitManipulation {
    * parent: "SHA prints separated by spaces"
    * The following lines are the files.
    * @param commit the commit id
-   * @return a, option with a commit object containing the infos.
+   * @return an option with a commit object containing the infos.
    */
   def findCommitInfos(commit: String): Option[CommitObject] = {
     if(!(".sgit/objects/"+commit).toFile.exists || (".sgit/objects/"+commit).toFile.isDirectory) return None
