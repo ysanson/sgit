@@ -25,7 +25,7 @@ object Logs {
           val recent = FileManipulation.findBlob(sameFiles._1.shaPrint)
           val old = FileManipulation.findBlob(sameFiles._2.shaPrint)
           if(recent.nonEmpty && old.nonEmpty) {
-            val diffs = Differences.findDifferentLines(recent.get.content, Some(old.get.content))
+            val diffs = Differences.findDifferentLines(recent.get.content, old.get.content)
             ConsoleOutput.printFileDifferences(recent.get.path, Some(diffs.get._1), Some(diffs.get._2))
           }
         })

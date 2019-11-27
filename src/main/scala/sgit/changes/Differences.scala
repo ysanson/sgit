@@ -14,17 +14,13 @@ object Differences {
    * @param secondFileContent the second file content, or none if it's absent.
    * @return An optional tuple of sequences of strings, the first one containing the added lines and the second one the deleted lines.
    */
-  def findDifferentLines(firstFileContent: String, secondFileContent: Option[String]): Option[(Seq[String], Seq[String])] = {
+  def findDifferentLines(firstFileContent: String, secondFileContent: String): Option[(Seq[String], Seq[String])] = {
     val firstFileLines = firstFileContent.split("\n").toIndexedSeq
-    if(secondFileContent.nonEmpty) {
-      val secondFileLines = secondFileContent.get.split("\n").toIndexedSeq
+      val secondFileLines = secondFileContent.split("\n").toIndexedSeq
       val addedLines = firstFileLines.diff(secondFileLines)
       val deletedLines = secondFileLines.diff(firstFileLines)
       if(addedLines.isEmpty && deletedLines.isEmpty) None
       else Some(addedLines, deletedLines)
-    } else {
-      Some(firstFileLines, Seq())
-    }
   }
 
   /**
@@ -38,7 +34,7 @@ object Differences {
       if(files.isEmpty) diffs
       else {
         val file = files.head
-        val lines = findDifferentLines(file._1.contentAsString, Some(file._2.contentAsString))
+        val lines = findDifferentLines(file._1.contentAsString, file._2.contentAsString)
         if(lines.nonEmpty) internal(files.tail, diffs:+lines.get)
         else internal(files.tail, diffs)
       }
@@ -107,7 +103,7 @@ object Differences {
       if(files.nonEmpty) {
         retrieveFiles(files.get).foreach(f => {
           val storedFileContent = f._2.contentAsString.substring(f._2.contentAsString.indexOf("\n"))
-          val differences = findDifferentLines(f._1.contentAsString, Some(storedFileContent))
+          val differences = findDifferentLines(f._1.contentAsString, storedFileContent)
           if(differences.nonEmpty) ConsoleOutput.printFileDifferences(f._1.name, Some(differences.get._1), Some(differences.get._2))
         })
       } else {
