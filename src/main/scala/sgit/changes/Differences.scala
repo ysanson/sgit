@@ -61,9 +61,12 @@ object Differences {
    */
   def differences(): Unit = {
     if(!".sgit".toFile.exists) ConsoleOutput.printError("sgit have not been initialized. Please run sgit init.")
-    val files = findDifferentFilesFromCommit(".".toFile)
-    if(files.nonEmpty) {
-      ConsoleOutput.printError("Error: Diff is not yet implemented.")
+    else if(CommitManipulation.findMostRecentCommit().isEmpty) ConsoleOutput.printToScreen("No commits yet.")
+    else {
+      val files = findDifferentFilesFromCommit(".".toFile)
+      if(files.nonEmpty) {
+        ConsoleOutput.printError("Error: Diff is not yet implemented.")
+      }
     }
   }
 }
