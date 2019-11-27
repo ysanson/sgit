@@ -47,7 +47,7 @@ object ConsoleOutput {
    * @param lines the lines to print
    */
   def printChangesToBeCommitted(lines: Seq[String]): Unit = {
-    printToScreen("Changes to be committed:\n  (use sgit commit --message to commit them)")
+    printToScreen("Changes to be committed:\n  (use sgit commit to commit them)")
     lines.foreach(l => printGreen(l))
   }
 

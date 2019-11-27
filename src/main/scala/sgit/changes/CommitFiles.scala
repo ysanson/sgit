@@ -33,7 +33,8 @@ object CommitFiles {
       None
     }
     else if(lastCommit.isEmpty) {
-      Some(executeCommit(stagedFiles.get, "Initial commit", ("", "")))
+      val firstDesc = if(description != "") description else "Initial commit"
+      Some(executeCommit(stagedFiles.get, firstDesc, ("", "")))
     } else {
 
       val last: CommitObject = CommitManipulation.findCommitInfos(lastCommit.get).get

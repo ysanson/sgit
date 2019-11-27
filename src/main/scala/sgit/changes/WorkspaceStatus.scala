@@ -117,6 +117,11 @@ object WorkspaceStatus {
       else ConsoleOutput.printToScreen("Last commit is " + commit.get + "\n\n")
 
       if (commit.isEmpty && stageDiff.isEmpty) ConsoleOutput.printUntrackedFiles(notInObjects)
+      else if(commit.isEmpty && stageDiff.nonEmpty) {
+        val tbc = readyToBeCommitted(stageDiff, None)
+        ConsoleOutput.printChangesToBeCommitted(tbc.get)
+      }
+      else if(commit.nonEmpty && stageDiff.isEmpty) ConsoleOutput.printYellow("No staged files. Working tree clean.")
       else if(commit.nonEmpty) {
         val commitInfos = CommitManipulation.findCommitInfos(commit.get)
         val notInCurrentBranch = findFilesNotInBranch(allFiles, if(stageDiff.nonEmpty) commitInfos.get.files.concat(stageDiff.get) else commitInfos.get.files)
