@@ -117,4 +117,8 @@ object FileManipulation {
       .createIfNotExists(asDirectory = false, createParents = true)
       .overwrite(blob.content)
 
+  def findAllFiles(baseDir: File): Option[List[File]] = {
+    if(!baseDir.isDirectory && ".sgit".toFile.exists) None
+    else Some(baseDir.listRecursively.filterNot(file => file.pathAsString.contains(".sgit") || file.isDirectory).toList)
+  }
 }

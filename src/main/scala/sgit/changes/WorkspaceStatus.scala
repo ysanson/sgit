@@ -121,7 +121,6 @@ object WorkspaceStatus {
         val tbc = readyToBeCommitted(stageDiff, None)
         ConsoleOutput.printChangesToBeCommitted(tbc.get)
       }
-      else if(commit.nonEmpty && stageDiff.isEmpty) ConsoleOutput.printYellow("No staged files. Working tree clean.")
       else if(commit.nonEmpty) {
         val commitInfos = CommitManipulation.findCommitInfos(commit.get)
         val notInCurrentBranch = findFilesNotInBranch(allFiles, if(stageDiff.nonEmpty) commitInfos.get.files.concat(stageDiff.get) else commitInfos.get.files)
@@ -144,8 +143,10 @@ object WorkspaceStatus {
           ConsoleOutput.printChangesNotStaged(deletedFiles.get.map(f => "   - deleted: " + f.name))
         if (nsfc._2.nonEmpty)
           ConsoleOutput.printUntrackedFiles(nsfc._2)
+        if(tbc.isEmpty && nsfc._1.isEmpty && nsfc._2.isEmpty && deletedFiles.isEmpty)
+          ConsoleOutput.printYellow("No modified files, working tree clean.")
       } else{
-        ConsoleOutput.printYellow("No commits or staged files yet, working tree clean.")
+        ConsoleOutput.printYellow("No modified files, working tree clean.")
       }
     }
   }

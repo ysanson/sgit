@@ -61,7 +61,7 @@ object AddFiles {
     val filesToDelete: Seq[StagedFile] =
       existingFiles.filter(old => addedNames.contains(old.name) && !addedSHA.contains(old.shaPrint))
 
-    (addedFiles.concat(existingFiles.diff(filesToDelete)), filesToDelete)
+    (addedFiles.concat(existingFiles.diff(filesToDelete)).distinct, filesToDelete)
   }
 
   /**

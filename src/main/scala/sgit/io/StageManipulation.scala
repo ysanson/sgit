@@ -35,10 +35,7 @@ object StageManipulation {
     if(!".sgit/staged".toFile.exists) None
     else {
       val stagedFile: File = ".sgit/staged".toFile.createIfNotExists().overwrite("")
-      val content: String = stagedFile.contentAsString
-      fileSignatures.foreach(file => {
-        if(!content.contains(file.shaPrint)) stagedFile.appendLine(file.shaPrint + " " + file.name)
-      })
+      fileSignatures.foreach(file => stagedFile.appendLine(file.shaPrint + " " + file.name))
       Some(true)
     }
   }

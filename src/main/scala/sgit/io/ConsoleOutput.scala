@@ -59,4 +59,17 @@ object ConsoleOutput {
     printToScreen("Changed not staged for commit:\n (Use sgit add <file>... to update what will be committed)")
     lines.foreach(l => printRed(l))
   }
+
+  /**
+   * Prints the file differences, line by line.
+   * @param fileName the file's name.
+   * @param addedLines the added lines, None if none.
+   * @param deletedLines the deleted lines, None if none.
+   */
+  def printFileDifferences(fileName: String, addedLines: Option[Seq[String]], deletedLines: Option[Seq[String]]): Unit = {
+    printYellow("\nFor file " + fileName + "\n")
+    if(addedLines.nonEmpty) addedLines.get.foreach(line => printGreen("+ " + line))
+    if(deletedLines.nonEmpty) deletedLines.get.foreach(line => printRed("- " + line))
+    printToScreen("\n")
+  }
 }

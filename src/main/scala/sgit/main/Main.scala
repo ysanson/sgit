@@ -1,7 +1,7 @@
 package sgit.main
 
 import org.backuity.clist.Cli
-import sgit.changes.{AddFiles, CommitFiles, WorkspaceStatus, Restore}
+import sgit.changes.{AddFiles, CommitFiles, WorkspaceStatus, Restore, Differences}
 import sgit.create.InitializeRepository
 import sgit.logs.Logs
 import sgit.refs.{Tags, Branches}
@@ -18,7 +18,7 @@ object Main extends App {
     .withCommands(Init, Status, Diff, Commit, Add, Log, Tag, Branch, Checkout) match {
     case Some(Init) => InitializeRepository.createFolder()
     case Some(Status) => WorkspaceStatus.status()
-    case Some(Diff) => println("This function is not implemented.")
+    case Some(Diff) => Differences.differences()
     case Some(Commit) => CommitFiles.commit(Commit.desc)
     case Some(Add) => AddFiles.add(Add.files)
     case Some(Log) => Logs.showLog(Log.overtime, Log.stat)
