@@ -52,9 +52,11 @@ object Differences {
     val stagedFiles = StageManipulation.retrieveStagedFiles()
     val storedFiles = if(stagedFiles.nonEmpty) committedFiles.concat(stagedFiles.get) else committedFiles
     differentFiles.map(file => {
-      val storedFile = storedFiles.find(sf => sf.name.contains(file.name)).get
-      (file, FileManipulation.retrieveFileFromObjects(storedFile.shaPrint).get)
-    })
+      val storedFile = storedFiles.find(sf => sf.name.contains(file.name))
+      if(storedFile.nonEmpty)
+        (file, FileManipulation.retrieveFileFromObjects(storedFile.get.shaPrint).get)
+      else null
+    }).filterNot(file => file == null)
   }
   /**
    * Finds the different files between the last commit and the working dir.
