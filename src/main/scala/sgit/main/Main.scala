@@ -14,7 +14,7 @@ import sgit.main.commands.{Add, Commit, Diff, Init, Status, Log, Tag, Branch, Ch
 object Main extends App {
   Cli.parse(args)
     .withProgramName("sgit")
-    .version("1.0")
+    .version("2.0")
     .withCommands(Init, Status, Diff, Commit, Add, Log, Tag, Branch, Checkout) match {
     case Some(Init) => InitializeRepository.createFolder()
     case Some(Status) => WorkspaceStatus.status()
